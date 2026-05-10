@@ -9,13 +9,14 @@ export default {
   theme: {
     extend: {
       colors: {
+        // CUSTOM-FORK: custom brand palette (matches apps/web theme.css dark mode tokens)
         studio: {
-          bg: "#0a0a0a",
-          surface: "#141414",
-          border: "#262626",
-          text: "#e5e5e5",
+          bg: "#18181b",
+          surface: "#1d1d20",
+          border: "#262629",
+          text: "#cbcbcd",
           muted: "#737373",
-          accent: "#3CE6AC",
+          accent: "#5d5fef",
         },
       },
     },

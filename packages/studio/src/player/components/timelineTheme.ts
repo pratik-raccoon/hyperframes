@@ -35,16 +35,17 @@ export interface TimelineTheme {
   clipRadius: string;
 }
 
-const TIMELINE_TEAL = "#3CE6AC";
-const TIMELINE_TEAL_LABEL = "#E9FFF6";
-const TIMELINE_TEAL_ICON_BACKGROUND = "rgba(60,230,172,0.12)";
+// CUSTOM-FORK: custom brand palette (was teal #3CE6AC)
+const TIMELINE_ACCENT = "#5d5fef";
+const TIMELINE_ACCENT_LABEL = "#EEEFFE";
+const TIMELINE_ACCENT_ICON_BACKGROUND = "rgba(93,95,239,0.12)";
 
 function createTrackStyle(): TimelineTrackStyle {
   return {
-    clip: TIMELINE_TEAL,
-    accent: TIMELINE_TEAL,
-    label: TIMELINE_TEAL_LABEL,
-    iconBackground: TIMELINE_TEAL_ICON_BACKGROUND,
+    clip: TIMELINE_ACCENT,
+    accent: TIMELINE_ACCENT,
+    label: TIMELINE_ACCENT_LABEL,
+    iconBackground: TIMELINE_ACCENT_ICON_BACKGROUND,
   };
 }
 

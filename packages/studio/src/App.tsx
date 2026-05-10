@@ -51,6 +51,8 @@ import {
 import { buildFrameCaptureFilename, buildFrameCaptureUrl } from "./utils/frameCapture";
 import { buildProjectHash, parseProjectIdFromHash } from "./utils/projectRouting";
 import { Camera } from "./icons/SystemIcons";
+// CUSTOM-FORK: feature flags — gates Export/Renders UI
+import { FEATURES } from "./features";
 
 interface EditingFile {
   path: string;
@@ -1452,28 +1454,31 @@ export function StudioApp() {
             <Camera size={14} />
             <span>Capture</span>
           </a>
-          <button
-            onClick={() => setRightCollapsed((v) => !v)}
-            className={`h-7 flex items-center gap-1.5 px-2.5 rounded-md text-[11px] font-medium border transition-colors ${
-              !rightCollapsed
-                ? "text-studio-accent bg-studio-accent/10 border-studio-accent/30"
-                : "text-neutral-500 hover:text-neutral-300 hover:bg-neutral-800 border-transparent"
-            }`}
-          >
-            <svg
-              width="12"
-              height="12"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
+          {/* CUSTOM-FORK: Renders/Export button gated by FEATURES.export */}
+          {FEATURES.export && (
+            <button
+              onClick={() => setRightCollapsed((v) => !v)}
+              className={`h-7 flex items-center gap-1.5 px-2.5 rounded-md text-[11px] font-medium border transition-colors ${
+                !rightCollapsed
+                  ? "text-studio-accent bg-studio-accent/10 border-studio-accent/30"
+                  : "text-neutral-500 hover:text-neutral-300 hover:bg-neutral-800 border-transparent"
+              }`}
             >
-              <circle cx="12" cy="12" r="10" />
-              <polygon points="10 8 16 12 10 16" fill="currentColor" stroke="none" />
-            </svg>
-            Renders
-            {renderQueue.jobs.length > 0 ? ` (${renderQueue.jobs.length})` : ""}
-          </button>
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <polygon points="10 8 16 12 10 16" fill="currentColor" stroke="none" />
+              </svg>
+              Renders
+              {renderQueue.jobs.length > 0 ? ` (${renderQueue.jobs.length})` : ""}
+            </button>
+          )}
         </div>
       </div>
 
@@ -1678,7 +1683,8 @@ export function StudioApp() {
             >
               {captionEditMode ? (
                 <CaptionPropertyPanel iframeRef={previewIframeRef} />
-              ) : (
+              ) : FEATURES.export ? (
+                /* CUSTOM-FORK: RenderQueue gated by FEATURES.export */
                 <RenderQueue
                   jobs={renderQueue.jobs}
                   projectId={projectId}
@@ -1689,7 +1695,7 @@ export function StudioApp() {
                   }
                   isRendering={renderQueue.isRendering}
                 />
-              )}
+              ) : null}
             </div>
           </>
         )}

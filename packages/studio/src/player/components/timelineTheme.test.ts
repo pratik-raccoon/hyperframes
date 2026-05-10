@@ -11,7 +11,8 @@ describe("getTimelineTrackStyle", () => {
   });
 
   it("falls back for unknown tags", () => {
-    expect(getTimelineTrackStyle("custom-tag").accent).toBe("#3CE6AC");
+    // CUSTOM-FORK: custom brand accent (was #3CE6AC)
+    expect(getTimelineTrackStyle("custom-tag").accent).toBe("#5d5fef");
   });
 });
 

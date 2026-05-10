@@ -100,7 +100,8 @@ function FileIcon({ path }: { path: string }) {
   if (ext === "mp4" || ext === "webm" || ext === "mov")
     return <FileVideo size={SZ} weight={W} color="#A855F7" className={c} />;
   if (ext === "mp3" || ext === "wav" || ext === "ogg" || ext === "m4a")
-    return <Waveform size={SZ} weight={W} color="#3CE6AC" className={c} />;
+    // CUSTOM-FORK: custom accent (was #3CE6AC)
+    return <Waveform size={SZ} weight={W} color="#5d5fef" className={c} />;
   if (ext === "woff" || ext === "woff2" || ext === "ttf" || ext === "otf")
     return <TextAa size={SZ} weight={W} color="#6B7280" className={c} />;
   return <File size={SZ} weight={W} color="#6B7280" className={c} />;
@@ -359,7 +360,7 @@ function InlineInput({
         onChange={(e) => setValue(e.target.value)}
         onKeyDown={handleKeyDown}
         onBlur={handleBlur}
-        className="flex-1 min-w-0 bg-neutral-800 text-neutral-200 text-xs px-1.5 py-0.5 rounded border border-neutral-600 outline-none focus:border-[#3CE6AC]"
+        className="flex-1 min-w-0 bg-neutral-800 text-neutral-200 text-xs px-1.5 py-0.5 rounded border border-neutral-600 outline-none focus:border-[#5d5fef]"
         spellCheck={false}
       />
     </div>
@@ -495,7 +496,7 @@ function TreeFolder({
         }}
         onDragLeave={onDragLeave}
         className={`w-full flex items-center gap-1.5 px-2.5 py-1 min-h-7 text-left text-xs text-neutral-400 hover:bg-neutral-800/30 hover:text-neutral-300 transition-colors ${
-          isDragOver ? "bg-[#3CE6AC]/10 outline outline-1 outline-[#3CE6AC]/40" : ""
+          isDragOver ? "bg-[#5d5fef]/10 outline outline-1 outline-[#5d5fef]/40" : ""
         }`}
         style={{ paddingLeft: `${8 + depth * 12}px` }}
       >
@@ -851,7 +852,7 @@ export const FileTree = memo(function FileTree({
       <div
         className={`flex-1 overflow-y-auto py-1 transition-colors ${
           dragOverFolder === ""
-            ? "bg-[#3CE6AC]/5 outline outline-1 outline-[#3CE6AC]/30 -outline-offset-1"
+            ? "bg-[#5d5fef]/5 outline outline-1 outline-[#5d5fef]/30 -outline-offset-1"
             : ""
         }`}
         onContextMenu={handleRootContextMenu}

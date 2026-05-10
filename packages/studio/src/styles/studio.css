@@ -5,17 +5,21 @@
 /*
  * Studio is a dark-only UI — pin the user-agent color scheme to dark so that
  * browser-native chrome (scrollbars, form controls, focus rings) picks the
- * matching palette instead of defaulting to light against our #0a0a0a body.
+ * matching palette instead of defaulting to light against our #18181b body.
  */
 :root {
   color-scheme: dark;
+  /* CUSTOM-FORK: custom brand accent. Many components reference
+   * var(--hf-accent, #3CE6AC) — defining it here re-skins them centrally. */
+  --hf-accent: #5d5fef;
 }
 
 body {
   margin: 0;
   padding: 0;
-  background: #0a0a0a;
-  color: #e5e5e5;
+  /* CUSTOM-FORK: custom dark bg / fg */
+  background: #18181b;
+  color: #cbcbcd;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   overflow: hidden;
 }
@@ -93,7 +97,8 @@ body {
 .hf-loader-mark {
   display: block;
   overflow: visible;
-  filter: drop-shadow(0 0 7px rgba(79, 219, 94, 0.2));
+  /* CUSTOM-FORK: custom tinted glow */
+  filter: drop-shadow(0 0 7px rgba(93, 95, 239, 0.25));
   user-select: none;
   -webkit-user-select: none;
   -webkit-user-drag: none;
@@ -158,6 +163,7 @@ body {
   transform: scaleX(0);
   transform-origin: left center;
   border-radius: inherit;
-  background: linear-gradient(90deg, #06e3fa, #4fdb5e);
+  /* CUSTOM-FORK: custom gradient */
+  background: linear-gradient(90deg, #5d5fef, #8b8df0);
   transition: transform 160ms ease;
 }

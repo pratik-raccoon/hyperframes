@@ -306,8 +306,13 @@ export function registerFileRoutes(api: Hono, adapter: StudioApiAdapter): void {
       const skipped: string[] = [];
       const invalid: Array<{ name: string; reason: string }> = [];
 
-      for (const [, value] of formData.entries()) {
-        if (!(value instanceof File)) continue;
+      // CUSTOM-FORK: minimal File-like type. Upstream uses `instanceof File`,
+      // which fails under strict TS in this env (no DOM `File` global picked up,
+      // FormDataEntryValue narrows to `string` only). Cast to a structural type.
+      type UploadedFile = { name: string; size: number; arrayBuffer(): Promise<ArrayBuffer> };
+      for (const [, rawValue] of formData.entries()) {
+        if (typeof rawValue === "string") continue;
+        const value = rawValue as UploadedFile;
 
         // Strip path separators — browsers may include directory components
         const name = value.name.split("/").pop()?.split("\\").pop() ?? "";

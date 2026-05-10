@@ -6,7 +6,8 @@ import { useCaptionStore } from "../store";
 // ---------------------------------------------------------------------------
 
 const GROUP_COLORS = [
-  "#3CE6AC",
+  // CUSTOM-FORK: lead with custom accent (was #3CE6AC)
+  "#5d5fef",
   "#FF6B6B",
   "#4ECDC4",
   "#FFE66D",
