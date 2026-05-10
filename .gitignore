@@ -49,6 +49,9 @@ compositions/**/*.MOV
 
 # npm pack artifacts
 *.tgz
+# CUSTOM-FORK: allow the packaged cli artifact consumed by modal-functions
+# (see base_snapshot.py — image curls releases/hyperframes-cli.tgz at build time).
+!releases/hyperframes-cli.tgz
 
 # Logs
 *.log
