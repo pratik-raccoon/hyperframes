@@ -159,6 +159,22 @@ export function StudioApp() {
   const [rightWidth, setRightWidth] = useState(400);
   const [leftCollapsed, setLeftCollapsed] = useState(false);
   const [rightCollapsed, setRightCollapsed] = useState(true);
+  // CUSTOM-FORK: when Studio is embedded inside the Raccoon motion-preview
+  // iframe, the parent posts RACCOON_MOTION_HOST_HELLO once on iframe load.
+  // We surface the Export/Renders button (otherwise hidden by FEATURES.export)
+  // only in that case. Standalone tabs stay in the locked-down state.
+  const [isRaccoonHost, setIsRaccoonHost] = useState(false);
+  // eslint-disable-next-line no-restricted-syntax
+  useEffect(() => {
+    if (window.parent === window) return;
+    const onMsg = (e: MessageEvent) => {
+      if (e.data?.type === "RACCOON_MOTION_HOST_HELLO") {
+        setIsRaccoonHost(true);
+      }
+    };
+    window.addEventListener("message", onMsg);
+    return () => window.removeEventListener("message", onMsg);
+  }, []);
   // Auto-enter caption edit mode when the iframe contains .caption-group elements.
   // This is a subscription to external events (postMessage from runtime) — useEffect
   // is appropriate here. The runtime fires "state"/"timeline" messages after all
@@ -1454,10 +1470,26 @@ export function StudioApp() {
             <Camera size={14} />
             <span>Capture</span>
           </a>
-          {/* CUSTOM-FORK: Renders/Export button gated by FEATURES.export */}
-          {FEATURES.export && (
+          {/* CUSTOM-FORK: Renders/Export button — visible if FEATURES.export
+              OR when Studio is embedded in the Raccoon motion-preview host.
+              In host mode the click posts a message to the parent instead of
+              toggling the (still-hidden) RenderQueue right panel. */}
+          {(FEATURES.export || isRaccoonHost) && (
             <button
-              onClick={() => setRightCollapsed((v) => !v)}
+              onClick={() => {
+                if (isRaccoonHost) {
+                  window.parent.postMessage(
+                    {
+                      type: "RACCOON_EXPORT_REQUESTED",
+                      projectId,
+                      activeCompPath,
+                    },
+                    "*",
+                  );
+                  return;
+                }
+                setRightCollapsed((v) => !v);
+              }}
               className={`h-7 flex items-center gap-1.5 px-2.5 rounded-md text-[11px] font-medium border transition-colors ${
                 !rightCollapsed
                   ? "text-studio-accent bg-studio-accent/10 border-studio-accent/30"
