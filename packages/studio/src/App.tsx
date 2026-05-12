@@ -157,7 +157,13 @@ export function StudioApp() {
   // Resizable and collapsible panel widths
   const [leftWidth, setLeftWidth] = useState(240);
   const [rightWidth, setRightWidth] = useState(400);
-  const [leftCollapsed, setLeftCollapsed] = useState(false);
+  // CUSTOM-FORK: collapse the left sidebar by default when Studio is embedded
+  // (e.g. inside the Raccoon motion-preview iframe) to save horizontal space.
+  // Standalone tabs keep the full editor view. `window.parent !== window` is
+  // a synchronous in-iframe check, so there's no initial-render flash.
+  const [leftCollapsed, setLeftCollapsed] = useState(
+    () => typeof window !== "undefined" && window.parent !== window,
+  );
   const [rightCollapsed, setRightCollapsed] = useState(true);
   // CUSTOM-FORK: when Studio is embedded inside the Raccoon motion-preview
   // iframe, the parent posts RACCOON_MOTION_HOST_HELLO once on iframe load.
@@ -296,7 +302,11 @@ export function StudioApp() {
   }, [captionHasSelection, captionEditMode]);
   const [globalDragOver, setGlobalDragOver] = useState(false);
   const [appToast, setAppToast] = useState<AppToast | null>(null);
-  const [timelineVisible, setTimelineVisible] = useState(true);
+  // CUSTOM-FORK: hide the timeline by default when Studio is embedded — the
+  // user can re-open it from the toolbar. Standalone tabs keep it visible.
+  const [timelineVisible, setTimelineVisible] = useState(
+    () => typeof window === "undefined" || window.parent === window,
+  );
   const [captureFrameTime, setCaptureFrameTime] = useState(0);
   const dragCounterRef = useRef(0);
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
