@@ -39,6 +39,7 @@ Stay consistent with the fork's existing tag scheme — don't invent a new forma
 
 ```bash
 gh release create <tag> \
+  --repo <owner>/<repo> \
   --title "<tag> — <one-line summary>" \
   --notes "$(cat <<'EOF'
 ### What changed
@@ -55,6 +56,8 @@ EOF
 
 The tarball goes as a **positional argument** — that's how `gh` attaches assets. Match the prerelease flag (`--prerelease` or omit) to what the prior releases used.
 
+**Always pass `--repo <owner>/<repo>` explicitly.** A fork repo usually has an `upstream` remote pointing at the original; without `--repo`, `gh` may resolve to upstream and reject the release with `tag exists locally but has not been pushed to <upstream>`. Use `git remote -v` to see which remote is which — the release targets the fork (origin), not upstream.
+
 ### 4. Verify and clean up
 
 ```bash
@@ -65,7 +68,9 @@ curl -sLI -o /dev/null -w "%{http_code}\n" \
 
 # Drop the rebuilt local binary
 git checkout -- releases/hyperframes-cli.tgz
-rm -f packages/cli/hyperframes-cli-*.tgz
+# Step 1's `mv` already cleared packages/cli/hyperframes-cli-*.tgz; if anything
+# is left over, remove it without failing on no-match (zsh aborts otherwise):
+find packages/cli -maxdepth 1 -name 'hyperframes-cli-*.tgz' -delete 2>/dev/null || true
 ```
 
 ## Things to know
