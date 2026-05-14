@@ -9,14 +9,23 @@ export default {
   theme: {
     extend: {
       colors: {
+        // CUSTOM-FORK: studio.* palette wired to Raccoon theme tokens
+        // defined on :root in src/styles/studio.css. Reskinning the fork is
+        // a single edit to those vars — no component touches needed.
         studio: {
-          bg: "#0a0a0a",
-          surface: "#141414",
-          border: "#262626",
-          text: "#e5e5e5",
-          muted: "#737373",
-          accent: "#3CE6AC",
+          bg: "var(--background)",
+          surface: "var(--card)",
+          border: "var(--border)",
+          text: "var(--foreground)",
+          muted: "var(--muted-foreground)",
+          accent: "var(--raccoon)",
         },
+        raccoon: "var(--raccoon)",
+      },
+      fontFamily: {
+        // CUSTOM-FORK: Geist family loaded in index.html.
+        sans: ['"Geist"', "-apple-system", "BlinkMacSystemFont", '"Segoe UI"', "sans-serif"],
+        mono: ['"Geist Mono"', '"JetBrains Mono"', '"SF Mono"', "monospace"],
       },
     },
   },

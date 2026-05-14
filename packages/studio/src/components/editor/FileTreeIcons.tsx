@@ -45,7 +45,8 @@ export function FileIcon({ path }: { path: string }) {
   if (ext === "mp4" || ext === "webm" || ext === "mov")
     return <FileVideo size={SZ} weight={W} color="#A855F7" className={c} />;
   if (ext === "mp3" || ext === "wav" || ext === "ogg" || ext === "m4a")
-    return <Waveform size={SZ} weight={W} color="#3CE6AC" className={c} />;
+    // CUSTOM-FORK: use Raccoon brand purple via the studio.accent token.
+    return <Waveform size={SZ} weight={W} color="var(--raccoon)" className={c} />;
   if (ext === "woff" || ext === "woff2" || ext === "ttf" || ext === "otf")
     return <TextAa size={SZ} weight={W} color="#6B7280" className={c} />;
   return <File size={SZ} weight={W} color="#6B7280" className={c} />;

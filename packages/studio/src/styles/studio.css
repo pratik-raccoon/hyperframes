@@ -9,14 +9,37 @@
  */
 :root {
   color-scheme: dark;
+
+  /* CUSTOM-FORK: Raccoon theme tokens — mirrors the .dark block of
+   * apps/web/src/app/theme.css in the Raccoon motion repo. The studio.*
+   * Tailwind palette in tailwind.config.js reads from these vars, so all
+   * 49+ existing bg-studio-accent / text-studio-accent usages reskin
+   * automatically. */
+  --raccoon: #5d5fef;
+  --raccoon-foreground: hsl(239, 82%, 65%);
+  --background: hsl(240, 6%, 10%);
+  --foreground: hsl(240, 5%, 80%);
+  --card: hsl(240, 6%, 12%);
+  --popover: hsl(240, 5%, 10%);
+  --muted: hsl(240, 6%, 14%);
+  --muted-foreground: hsl(240, 5%, 65%);
+  --border: hsl(240, 6%, 15%);
+  --ring: var(--raccoon);
 }
 
 body {
   margin: 0;
   padding: 0;
-  background: #0a0a0a;
-  color: #e5e5e5;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--background);
+  color: var(--foreground);
+  /* CUSTOM-FORK: Geist Sans loaded via Google Fonts CDN in index.html. */
+  font-family:
+    "Geist",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
   overflow: hidden;
 }
 
@@ -43,7 +66,8 @@ body {
 }
 
 .cm-editor .cm-scroller {
-  font-family: "JetBrains Mono", "Fira Code", "SF Mono", monospace;
+  /* CUSTOM-FORK: prefer Geist Mono when available. */
+  font-family: "Geist Mono", "JetBrains Mono", "Fira Code", "SF Mono", monospace;
 }
 
 .cm-editor.cm-focused {
