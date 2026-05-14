@@ -421,7 +421,8 @@ export function StudioApp() {
       // Composition clips — always use the comp's own preview URL for thumbnails.
       // This renders the composition in isolation so we get clean frames
       // instead of capturing the master at a time when the comp is fading in.
-      if (compSrc) {
+      // CUSTOM-FORK: gated by FEATURES.compositionThumbnails (Puppeteer cost).
+      if (compSrc && FEATURES.compositionThumbnails) {
         return (
           <CompositionThumbnail
             previewUrl={`/api/projects/${pid}/preview/comp/${compSrc}`}
@@ -437,7 +438,8 @@ export function StudioApp() {
 
       // When drilled into a composition, render all inner elements via
       // CompositionThumbnail at their start time — most accurate visual.
-      if (activePreviewUrl && el.duration > 0) {
+      // CUSTOM-FORK: gated by FEATURES.compositionThumbnails (Puppeteer cost).
+      if (activePreviewUrl && el.duration > 0 && FEATURES.compositionThumbnails) {
         return (
           <CompositionThumbnail
             previewUrl={activePreviewUrl}
@@ -498,7 +500,8 @@ export function StudioApp() {
         );
       }
 
-      if (htmlPreviewEligible) {
+      // CUSTOM-FORK: gated by FEATURES.compositionThumbnails (Puppeteer cost).
+      if (htmlPreviewEligible && FEATURES.compositionThumbnails) {
         return (
           <CompositionThumbnail
             previewUrl={`/api/projects/${pid}/preview`}
@@ -1467,19 +1470,22 @@ export function StudioApp() {
         </div>
         {/* Right: toolbar buttons */}
         <div className="flex items-center gap-1.5">
-          <a
-            href={captureFrameHref}
-            download={captureFrameFilename}
-            onClick={handleCaptureFrameClick}
-            onFocus={refreshCaptureFrameTime}
-            onPointerDown={refreshCaptureFrameTime}
-            className="h-7 flex items-center gap-1.5 px-2.5 rounded-md text-[11px] font-medium border border-neutral-700 text-neutral-300 transition-colors hover:border-neutral-500 hover:bg-neutral-800"
-            title="Capture current frame"
-            aria-label="Capture current frame"
-          >
-            <Camera size={14} />
-            <span>Capture</span>
-          </a>
+          {/* CUSTOM-FORK: Capture button gated by FEATURES.capture. */}
+          {FEATURES.capture && (
+            <a
+              href={captureFrameHref}
+              download={captureFrameFilename}
+              onClick={handleCaptureFrameClick}
+              onFocus={refreshCaptureFrameTime}
+              onPointerDown={refreshCaptureFrameTime}
+              className="h-7 flex items-center gap-1.5 px-2.5 rounded-md text-[11px] font-medium border border-neutral-700 text-neutral-300 transition-colors hover:border-neutral-500 hover:bg-neutral-800"
+              title="Capture current frame"
+              aria-label="Capture current frame"
+            >
+              <Camera size={14} />
+              <span>Capture</span>
+            </a>
+          )}
           {/* CUSTOM-FORK: Renders/Export button — visible if FEATURES.export
               OR when Studio is embedded in the Raccoon motion-preview host.
               In host mode the click posts a message to the parent instead of
@@ -1517,7 +1523,7 @@ export function StudioApp() {
                 <circle cx="12" cy="12" r="10" />
                 <polygon points="10 8 16 12 10 16" fill="currentColor" stroke="none" />
               </svg>
-              Renders
+              Render / Export
               {renderQueue.jobs.length > 0 ? ` (${renderQueue.jobs.length})` : ""}
             </button>
           )}
@@ -1527,7 +1533,11 @@ export function StudioApp() {
       {/* Main content: sidebar + preview + right panel */}
       <div className="flex flex-1 min-h-0">
         {/* Left sidebar: Compositions + Assets (resizable, collapsible) */}
-        {leftCollapsed ? (
+        {/* CUSTOM-FORK: gated by FEATURES.leftSidebar. Split the original
+            `leftCollapsed ? A : B` ternary into two independent `&&` blocks so
+            adding the gate doesn't reindent the inner JSX — that keeps merges
+            against upstream conflict-free on the LeftSidebar JSX itself. */}
+        {FEATURES.leftSidebar && leftCollapsed && (
           <div className="flex w-10 flex-shrink-0 flex-col items-center border-r border-neutral-800/50 bg-neutral-950 pt-1">
             <button
               type="button"
@@ -1552,7 +1562,8 @@ export function StudioApp() {
               </svg>
             </button>
           </div>
-        ) : (
+        )}
+        {FEATURES.leftSidebar && !leftCollapsed && (
           <LeftSidebar
             width={leftWidth}
             projectId={projectId}
@@ -1604,7 +1615,7 @@ export function StudioApp() {
         )}
 
         {/* Left resize handle */}
-        {!leftCollapsed && (
+        {FEATURES.leftSidebar && !leftCollapsed && (
           <div
             className="group w-2 flex-shrink-0 cursor-col-resize flex items-center justify-center"
             style={{ touchAction: "none" }}

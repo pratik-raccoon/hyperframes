@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Studio Embed Harness</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html,
+      body {
+        height: 100%;
+        background: #0a0a0a;
+        color: #e5e5e5;
+        font-family: ui-sans-serif, system-ui, sans-serif;
+      }
+      body {
+        display: grid;
+        grid-template-columns: 1fr 380px;
+        height: 100vh;
+      }
+      .stage {
+        position: relative;
+        background: #000;
+      }
+      iframe {
+        width: 100%;
+        height: 100%;
+        border: 0;
+        display: block;
+      }
+      .badge {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        z-index: 10;
+        background: rgba(99, 102, 241, 0.18);
+        color: #c7d2fe;
+        border: 1px solid rgba(99, 102, 241, 0.5);
+        border-radius: 6px;
+        padding: 4px 8px;
+        font:
+          11px ui-monospace,
+          monospace;
+      }
+      .panel {
+        display: flex;
+        flex-direction: column;
+        border-left: 1px solid #222;
+        background: #111;
+      }
+      .panel header {
+        padding: 12px 14px;
+        border-bottom: 1px solid #222;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .panel header h1 {
+        font-size: 13px;
+        font-weight: 600;
+        color: #fff;
+      }
+      .panel header .sub {
+        font-size: 11px;
+        color: #6b7280;
+        font-family: ui-monospace, monospace;
+      }
+      .toolbar {
+        display: flex;
+        gap: 6px;
+        padding: 8px 12px;
+        border-bottom: 1px solid #222;
+        background: #0d0d0d;
+      }
+      button {
+        background: #1f2937;
+        color: #e5e7eb;
+        border: 1px solid #374151;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font:
+          11px ui-monospace,
+          monospace;
+        cursor: pointer;
+      }
+      button:hover {
+        background: #374151;
+      }
+      button.primary {
+        background: #4f46e5;
+        border-color: #4f46e5;
+        color: #fff;
+      }
+      button.primary:hover {
+        background: #4338ca;
+      }
+      .log {
+        flex: 1;
+        overflow-y: auto;
+        padding: 8px 12px;
+        font:
+          11px/1.5 ui-monospace,
+          monospace;
+      }
+      .row {
+        padding: 6px 0;
+        border-bottom: 1px dashed #1f1f1f;
+      }
+      .row .meta {
+        color: #6b7280;
+        font-size: 10px;
+      }
+      .row .dir {
+        display: inline-block;
+        padding: 1px 6px;
+        border-radius: 3px;
+        margin-right: 6px;
+        font-size: 10px;
+        font-weight: 600;
+      }
+      .row.in .dir {
+        background: #064e3b;
+        color: #6ee7b7;
+      }
+      .row.out .dir {
+        background: #1e3a8a;
+        color: #93c5fd;
+      }
+      .row.sys .dir {
+        background: #374151;
+        color: #9ca3af;
+      }
+      .row pre {
+        white-space: pre-wrap;
+        word-break: break-word;
+        color: #d1d5db;
+        margin-top: 2px;
+      }
+      .row .type {
+        color: #fbbf24;
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="stage">
+      <iframe id="studio" src="http://localhost:5190/#project/kinetic-type"></iframe>
+    </div>
+
+    <aside class="panel">
+      <header>
+        <div>
+          <h1>postMessage bus</h1>
+          <div class="sub">parent ⇄ studio iframe</div>
+        </div>
+      </header>
+      <div class="toolbar">
+        <button class="primary" id="hello">Send HELLO</button>
+        <button id="clear">Clear log</button>
+        <button id="reload">Reload iframe</button>
+      </div>
+      <div class="log" id="log"></div>
+    </aside>
+
+    <script>
+      const iframe = document.getElementById("studio");
+      const logEl = document.getElementById("log");
+      const badge = document.getElementById("badge");
+
+      const fmt = (v) => {
+        try {
+          return JSON.stringify(v, null, 2);
+        } catch {
+          return String(v);
+        }
+      };
+
+      const append = (kind, dir, type, data) => {
+        const row = document.createElement("div");
+        row.className = `row ${kind}`;
+        const ts =
+          new Date().toLocaleTimeString("en-US", { hour12: false }) +
+          "." +
+          String(Date.now() % 1000).padStart(3, "0");
+        row.innerHTML =
+          `<div class="meta"><span class="dir">${dir}</span>` +
+          `${ts} <span class="type">${type ?? ""}</span></div>` +
+          (data !== undefined
+            ? `<pre>${fmt(data).replace(/[<>&]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;" })[c])}</pre>`
+            : "");
+        logEl.appendChild(row);
+        logEl.scrollTop = logEl.scrollHeight;
+        // Mirror to devtools too
+        console.log(`[host-harness] ${dir} ${type ?? ""}`, data ?? "");
+      };
+
+      const sendHello = () => {
+        if (!iframe.contentWindow) {
+          append("sys", "—", "skip: iframe not yet loaded", null);
+          return;
+        }
+        const msg = { type: "RACCOON_MOTION_HOST_HELLO" };
+        iframe.contentWindow.postMessage(msg, "*");
+        append("out", "→", msg.type, msg);
+        badge.textContent = "host-harness · HELLO sent ✓";
+        badge.style.background = "rgba(16,185,129,0.18)";
+        badge.style.borderColor = "rgba(16,185,129,0.5)";
+        badge.style.color = "#a7f3d0";
+      };
+
+      iframe.addEventListener("load", () => {
+        append("sys", "—", "iframe loaded", { src: iframe.src });
+        sendHello();
+      });
+
+      window.addEventListener("message", (e) => {
+        if (e.source !== iframe.contentWindow) return; // ignore noise from extensions
+        const data = e.data;
+        const type = (data && typeof data === "object" && data.type) || "(no .type)";
+        append("in", "←", type, data);
+      });
+
+      document.getElementById("hello").addEventListener("click", sendHello);
+      document.getElementById("clear").addEventListener("click", () => {
+        logEl.innerHTML = "";
+      });
+      document.getElementById("reload").addEventListener("click", () => {
+        // eslint-disable-next-line no-self-assign
+        iframe.src = iframe.src;
+        append("sys", "—", "reloading iframe", null);
+      });
+
+      append("sys", "—", "harness ready", {
+        studio: iframe.src,
+        patches: [
+          "52fbac2 — collapse left sidebar + hide timeline when window.parent !== window",
+          "f379bee — show Export button when RACCOON_MOTION_HOST_HELLO received",
+        ],
+      });
+    </script>
+  </body>
+</html>
