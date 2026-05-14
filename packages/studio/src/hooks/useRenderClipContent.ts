@@ -4,6 +4,9 @@ import { CompositionThumbnail, VideoThumbnail } from "../player";
 import type { TimelineElement } from "../player";
 import { AudioWaveform } from "../player/components/AudioWaveform";
 import { getTimelineElementLabel } from "../utils/studioHelpers";
+// CUSTOM-FORK: skip iframe-based composition thumbnails in the sandbox build —
+// the host preview already renders the comp, the extra iframes are pure waste.
+import { SANDBOX_HIDES_COMPOSITION_THUMBNAILS } from "../sandbox";
 
 interface UseRenderClipContentOptions {
   projectIdRef: { current: string | null };
@@ -22,6 +25,7 @@ export function useRenderClipContent({
     (el: TimelineElement, style: { clip: string; label: string }): ReactNode => {
       const pid = projectIdRef.current;
       if (!pid) return null;
+      if (SANDBOX_HIDES_COMPOSITION_THUMBNAILS) return null;
 
       // Resolve composition source path using the compIdToSrc map
       let compSrc = el.compositionSrc;

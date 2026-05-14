@@ -9,6 +9,9 @@ import {
   STUDIO_INSPECTOR_PANELS_ENABLED,
   STUDIO_MOTION_PANEL_ENABLED,
 } from "./editor/manualEditingAvailability";
+// CUSTOM-FORK: render queue requires local Chromium/FFmpeg — drop the tab
+// and the queue UI in the sandbox build. The Raccoon host handles export.
+import { SANDBOX_HIDES_EXPORT } from "../sandbox";
 import { useCallback } from "react";
 import { resolveDomEditSelection, type DomEditLayerItem } from "./editor/domEditing";
 import { useStudioContext } from "../contexts/StudioContext";
@@ -142,17 +145,19 @@ export function StudioRightPanel({
                   )}
                 </>
               )}
-              <button
-                type="button"
-                onClick={() => setRightPanelTab("renders")}
-                className={`h-8 rounded-xl px-3 text-[11px] font-medium transition-colors ${
-                  rightPanelTab === "renders"
-                    ? "bg-neutral-800 text-white"
-                    : "text-neutral-500 hover:bg-neutral-800/70 hover:text-neutral-200"
-                }`}
-              >
-                {renderJobs.length > 0 ? `Renders (${renderJobs.length})` : "Renders"}
-              </button>
+              {!SANDBOX_HIDES_EXPORT && (
+                <button
+                  type="button"
+                  onClick={() => setRightPanelTab("renders")}
+                  className={`h-8 rounded-xl px-3 text-[11px] font-medium transition-colors ${
+                    rightPanelTab === "renders"
+                      ? "bg-neutral-800 text-white"
+                      : "text-neutral-500 hover:bg-neutral-800/70 hover:text-neutral-200"
+                  }`}
+                >
+                  {renderJobs.length > 0 ? `Renders (${renderJobs.length})` : "Renders"}
+                </button>
+              )}
             </div>
             <div className="min-h-0 flex-1">
               {rightPanelTab === "layers" ? (
@@ -189,7 +194,7 @@ export function StudioRightPanel({
                   onSetMotion={handleDomMotionCommit}
                   onClearMotion={handleDomMotionClear}
                 />
-              ) : (
+              ) : SANDBOX_HIDES_EXPORT ? null : (
                 <RenderQueue
                   jobs={renderJobs}
                   projectId={projectId}

@@ -8,6 +8,8 @@ import { getHistoryShortcutLabel } from "../utils/studioHelpers";
 import { useStudioContext } from "../contexts/StudioContext";
 import { usePanelLayoutContext } from "../contexts/PanelLayoutContext";
 import { useDomEditContext } from "../contexts/DomEditContext";
+// CUSTOM-FORK: sandbox feature gates.
+import { SANDBOX_HIDES_CAPTURE, SANDBOX_HIDES_HEADER_LOGO } from "../sandbox";
 
 export interface StudioHeaderProps {
   captureFrameHref: string;
@@ -16,6 +18,9 @@ export interface StudioHeaderProps {
   refreshCaptureFrameTime: () => void;
   inspectorButtonActive: boolean;
   inspectorPanelActive: boolean;
+  // CUSTOM-FORK: surfaced by App.tsx when the Raccoon host hello has arrived.
+  showExportButton?: boolean;
+  onRequestExport?: () => void;
 }
 
 function HyperframesLogo() {
@@ -146,6 +151,8 @@ export function StudioHeader({
   refreshCaptureFrameTime,
   inspectorButtonActive,
   inspectorPanelActive,
+  showExportButton = false,
+  onRequestExport,
 }: StudioHeaderProps) {
   const { projectId, editHistory, handleUndo, handleRedo } = useStudioContext();
   const { rightCollapsed, setRightCollapsed, setRightPanelTab } = usePanelLayoutContext();
@@ -155,10 +162,16 @@ export function StudioHeader({
     <div className="flex items-center justify-between h-10 px-3 bg-neutral-900 border-b border-neutral-800 flex-shrink-0">
       {/* Left: logo + project name */}
       <div className="flex items-center gap-3">
-        <HyperframesLogo />
-        <span className="text-neutral-700 select-none" aria-hidden="true">
-          |
-        </span>
+        {/* CUSTOM-FORK: hide the Hyperframes wordmark in the sandbox build —
+         * the Raccoon host already brands the surrounding chrome. */}
+        {!SANDBOX_HIDES_HEADER_LOGO && (
+          <>
+            <HyperframesLogo />
+            <span className="text-neutral-700 select-none" aria-hidden="true">
+              |
+            </span>
+          </>
+        )}
         <span className="text-[11px] font-medium text-neutral-300">{projectId}</span>
       </div>
       {/* Right: toolbar buttons */}
@@ -199,19 +212,37 @@ export function StudioHeader({
         >
           <RotateCw size={14} />
         </button>
-        <a
-          href={captureFrameHref}
-          download={captureFrameFilename}
-          onClick={handleCaptureFrameClick}
-          onFocus={refreshCaptureFrameTime}
-          onPointerDown={refreshCaptureFrameTime}
-          className="h-7 flex items-center gap-1.5 px-2.5 rounded-md text-[11px] font-medium border border-neutral-700 text-neutral-300 transition-colors hover:border-neutral-500 hover:bg-neutral-800"
-          title="Capture current frame"
-          aria-label="Capture current frame"
-        >
-          <Camera size={14} />
-          <span>Capture</span>
-        </a>
+        {/* CUSTOM-FORK: Capture button needs local browser to render the frame —
+         * unavailable in the sandbox build. */}
+        {!SANDBOX_HIDES_CAPTURE && (
+          <a
+            href={captureFrameHref}
+            download={captureFrameFilename}
+            onClick={handleCaptureFrameClick}
+            onFocus={refreshCaptureFrameTime}
+            onPointerDown={refreshCaptureFrameTime}
+            className="h-7 flex items-center gap-1.5 px-2.5 rounded-md text-[11px] font-medium border border-neutral-700 text-neutral-300 transition-colors hover:border-neutral-500 hover:bg-neutral-800"
+            title="Capture current frame"
+            aria-label="Capture current frame"
+          >
+            <Camera size={14} />
+            <span>Capture</span>
+          </a>
+        )}
+        {/* CUSTOM-FORK: only present when the Raccoon host has handshaken via
+         * postMessage. Render is delegated to the host — we just emit a
+         * RACCOON_EXPORT_REQUESTED event and let the parent take it from there. */}
+        {showExportButton && (
+          <button
+            type="button"
+            onClick={onRequestExport}
+            className="h-7 flex items-center gap-1.5 px-3 rounded-md text-[11px] font-medium bg-studio-accent text-white transition-colors hover:opacity-90"
+            title="Export"
+            aria-label="Export"
+          >
+            <span>Export</span>
+          </button>
+        )}
         <button
           type="button"
           onClick={() => {

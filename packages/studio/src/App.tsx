@@ -1,5 +1,8 @@
 import { useState, useCallback, useRef, useMemo } from "react";
 import type { LeftSidebarHandle } from "./components/sidebar/LeftSidebar";
+// CUSTOM-FORK: sandbox feature gates + Raccoon host bridge.
+import { IS_SANDBOX_BUILD, SANDBOX_HIDES_LEFT_SIDEBAR } from "./sandbox";
+import { useRaccoonHostBridge } from "./hooks/useRaccoonHostBridge";
 import { useRenderQueue } from "./components/renders/useRenderQueue";
 import { usePlayerStore } from "./player";
 import { LintModal } from "./components/LintModal";
@@ -79,9 +82,12 @@ export function StudioApp() {
     window.setTimeout(() => setPreviewDocumentVersion((v) => v + 1), 300);
   }, []);
 
-  const [timelineVisible, setTimelineVisible] = useState(
-    () => readStudioUiPreferences().timelineVisible ?? true,
+  // CUSTOM-FORK: hide timeline by default in the sandbox build. The host iframe
+  // is for preview, not editing — exposing the timeline only adds clutter.
+  const [timelineVisible, setTimelineVisible] = useState(() =>
+    IS_SANDBOX_BUILD ? false : (readStudioUiPreferences().timelineVisible ?? true),
   );
+  const raccoonHost = useRaccoonHostBridge();
   const toggleTimelineVisibility = useCallback(() => {
     setTimelineVisible((v) => {
       writeStudioUiPreferences({ timelineVisible: !v });
@@ -363,15 +369,23 @@ export function StudioApp() {
                 refreshCaptureFrameTime={frameCapture.refreshCaptureFrameTime}
                 inspectorButtonActive={inspectorButtonActive}
                 inspectorPanelActive={inspectorPanelActive}
+                /* CUSTOM-FORK: surface the Export button in the header iff the
+                 * Raccoon host has hello'd (postMessage handshake). */
+                showExportButton={raccoonHost.isRaccoonHost}
+                onRequestExport={() => raccoonHost.requestExport({ projectId, activeCompPath })}
               />
 
               <div className="flex flex-1 min-h-0">
-                <StudioLeftSidebar
-                  leftSidebarRef={leftSidebarRef}
-                  onSelectComposition={handleSelectComposition}
-                  onLint={handleLint}
-                  linting={linting}
-                />
+                {/* CUSTOM-FORK: omit the left sidebar entirely in the sandbox
+                 * build — no file tree / source editor / lint affordance. */}
+                {!SANDBOX_HIDES_LEFT_SIDEBAR && (
+                  <StudioLeftSidebar
+                    leftSidebarRef={leftSidebarRef}
+                    onSelectComposition={handleSelectComposition}
+                    onLint={handleLint}
+                    linting={linting}
+                  />
+                )}
                 <StudioPreviewArea
                   timelineToolbar={timelineToolbar}
                   renderClipContent={renderClipContent}
