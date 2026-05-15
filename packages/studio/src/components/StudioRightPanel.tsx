@@ -102,7 +102,7 @@ export function StudioRightPanel({
         <div className="h-[52px] w-px bg-white/12 transition-colors group-hover:bg-white/18 group-active:bg-white/24" />
       </div>
       <div
-        className="flex flex-col border-l border-neutral-800 bg-neutral-900 flex-shrink-0"
+        className="flex flex-col border-l border-neutral-800 bg-neutral-950 flex-shrink-0"
         style={{ width: rightWidth }}
       >
         {captionEditMode ? (

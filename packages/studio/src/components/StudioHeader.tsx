@@ -159,7 +159,7 @@ export function StudioHeader({
   const { clearDomSelection } = useDomEditContext();
 
   return (
-    <div className="flex items-center justify-between h-10 px-3 bg-neutral-900 border-b border-neutral-800 flex-shrink-0">
+    <div className="flex items-center justify-between h-10 px-3 bg-neutral-950 border-b border-neutral-800 flex-shrink-0">
       {/* Left: logo + project name */}
       <div className="flex items-center gap-3">
         {/* CUSTOM-FORK: hide the Hyperframes wordmark in the raccoon build —

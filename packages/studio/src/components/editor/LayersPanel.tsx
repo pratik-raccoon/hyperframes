@@ -180,7 +180,7 @@ export const LayersPanel = memo(function LayersPanel() {
 
   if (layers.length === 0) {
     return (
-      <div className="flex h-full flex-col items-center justify-center bg-neutral-900 px-6 text-center">
+      <div className="flex h-full flex-col items-center justify-center bg-neutral-950 px-6 text-center">
         <Layers size={18} className="mb-3 text-neutral-600" />
         <p className="text-sm font-medium text-neutral-200">No layers</p>
         <p className="mt-1 text-xs text-neutral-500">Load a composition to see its element tree</p>
@@ -190,7 +190,7 @@ export const LayersPanel = memo(function LayersPanel() {
 
   return (
     <div
-      className="flex h-full min-h-0 flex-col overflow-hidden bg-neutral-900"
+      className="flex h-full min-h-0 flex-col overflow-hidden bg-neutral-950"
       onPointerLeave={() => handleLayerHover(null)}
     >
       <div className="border-b border-white/10 px-3 py-2 text-[11px] text-neutral-500">
