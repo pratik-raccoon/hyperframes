@@ -67,7 +67,6 @@ export function StudioRightPanel({
     handleDomTextFieldStyleCommit,
     handleDomAddTextField,
     handleDomRemoveTextField,
-    handleDomManualEditsReset,
     handleAskAgent,
     handleDomMotionCommit,
     handleDomMotionClear,
@@ -183,7 +182,6 @@ export function StudioRightPanel({
                   onSetTextFieldStyle={handleDomTextFieldStyleCommit}
                   onAddTextField={handleDomAddTextField}
                   onRemoveTextField={handleDomRemoveTextField}
-                  onResetManualEdits={handleDomManualEditsReset}
                   onAskAgent={handleAskAgent}
                   onImportAssets={handleImportFiles}
                   fontAssets={fontAssets}

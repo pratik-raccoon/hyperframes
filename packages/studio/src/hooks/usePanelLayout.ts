@@ -4,14 +4,21 @@ import { readStudioUiPreferences, writeStudioUiPreferences } from "../utils/stud
 // CUSTOM-FORK: collapse the left sidebar by default in the raccoon build.
 import { IS_RACCOON_BUILD } from "../raccoon";
 
-export function usePanelLayout() {
+export interface InitialPanelLayoutState {
+  rightCollapsed?: boolean | null;
+  rightPanelTab?: RightPanelTab | null;
+}
+
+export function usePanelLayout(initialState?: InitialPanelLayoutState) {
   const [leftWidth, setLeftWidth] = useState(240);
   const [rightWidth, setRightWidth] = useState(400);
   const [leftCollapsed, setLeftCollapsed] = useState(
     () => IS_RACCOON_BUILD || (readStudioUiPreferences().leftCollapsed ?? false),
   );
-  const [rightCollapsed, setRightCollapsed] = useState(true);
-  const [rightPanelTab, setRightPanelTab] = useState<RightPanelTab>("renders");
+  const [rightCollapsed, setRightCollapsed] = useState(initialState?.rightCollapsed ?? true);
+  const [rightPanelTab, setRightPanelTab] = useState<RightPanelTab>(
+    initialState?.rightPanelTab ?? "renders",
+  );
   const panelDragRef = useRef<{
     side: "left" | "right";
     startX: number;
