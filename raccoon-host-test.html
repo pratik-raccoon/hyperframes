@@ -15,37 +15,175 @@
         --panel-width: 360px;
         --rail-width: 28px;
       }
-      * { box-sizing: border-box; }
-      html, body { margin: 0; padding: 0; height: 100%; background: var(--bg); color: var(--text); font-family: ui-sans-serif, system-ui, -apple-system, sans-serif; }
-      body { display: grid; grid-template-columns: 1fr var(--rail-width) var(--panel-width); min-height: 0; height: 100vh; transition: grid-template-columns 200ms ease; }
-      body.collapsed { grid-template-columns: 1fr var(--rail-width) 0px; }
-      iframe { width: 100%; height: 100%; border: 0; background: var(--surface); display: block; }
-      .rail { display: flex; align-items: flex-start; justify-content: center; padding-top: 12px; background: var(--bg); border-left: 1px solid var(--border); }
-      .toggle { width: 100%; height: 28px; display: flex; align-items: center; justify-content: center; background: transparent; border: 0; color: var(--muted); cursor: pointer; font: inherit; font-size: 14px; line-height: 1; }
-      .toggle:hover { color: var(--text); background: var(--surface); }
-      aside { display: flex; flex-direction: column; min-height: 0; background: var(--bg); overflow: hidden; border-left: 1px solid var(--border); }
-      .controls { padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; }
-      .controls-row { display: flex; align-items: center; gap: 8px; }
-      h1 { font-size: 13px; font-weight: 600; margin: 0; flex: 1; }
-      .pill { font-size: 11px; padding: 2px 8px; border: 1px solid var(--border); border-radius: 999px; color: var(--muted); white-space: nowrap; }
-      .pill.ok { color: #3ce6ac; border-color: #3ce6ac; }
-      input { background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; font: inherit; width: 100%; font-size: 12px; }
-      button { background: var(--accent); color: white; border: 0; padding: 6px 12px; border-radius: 6px; cursor: pointer; font: inherit; font-size: 12px; }
-      button.ghost { background: var(--surface); border: 1px solid var(--border); color: var(--text); }
-      button:hover { filter: brightness(1.15); }
-      aside h2 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin: 0; padding: 10px 16px; border-bottom: 1px solid var(--border); }
-      pre#log { flex: 1; margin: 0; padding: 12px 16px; overflow: auto; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
-      .row { padding: 8px 0; border-bottom: 1px dashed var(--border); }
-      .row:last-child { border-bottom: 0; }
-      .ts { color: var(--muted); }
-      .tag-out { color: #3ce6ac; }
-      .tag-in { color: #ffb86b; }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        background: var(--bg);
+        color: var(--text);
+        font-family:
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          sans-serif;
+      }
+      body {
+        display: grid;
+        grid-template-columns: 1fr var(--rail-width) var(--panel-width);
+        min-height: 0;
+        height: 100vh;
+        transition: grid-template-columns 200ms ease;
+      }
+      body.collapsed {
+        grid-template-columns: 1fr var(--rail-width) 0px;
+      }
+      iframe {
+        width: 100%;
+        height: 100%;
+        border: 0;
+        background: var(--surface);
+        display: block;
+      }
+      .rail {
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        padding-top: 12px;
+        background: var(--bg);
+        border-left: 1px solid var(--border);
+      }
+      .toggle {
+        width: 100%;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        border: 0;
+        color: var(--muted);
+        cursor: pointer;
+        font: inherit;
+        font-size: 14px;
+        line-height: 1;
+      }
+      .toggle:hover {
+        color: var(--text);
+        background: var(--surface);
+      }
+      aside {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        background: var(--bg);
+        overflow: hidden;
+        border-left: 1px solid var(--border);
+      }
+      .controls {
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .controls-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      h1 {
+        font-size: 13px;
+        font-weight: 600;
+        margin: 0;
+        flex: 1;
+      }
+      .pill {
+        font-size: 11px;
+        padding: 2px 8px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+      .pill.ok {
+        color: #3ce6ac;
+        border-color: #3ce6ac;
+      }
+      input {
+        background: var(--surface);
+        color: var(--text);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 6px 10px;
+        font: inherit;
+        width: 100%;
+        font-size: 12px;
+      }
+      button {
+        background: var(--accent);
+        color: white;
+        border: 0;
+        padding: 6px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font: inherit;
+        font-size: 12px;
+      }
+      button.ghost {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        color: var(--text);
+      }
+      button:hover {
+        filter: brightness(1.15);
+      }
+      aside h2 {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--muted);
+        margin: 0;
+        padding: 10px 16px;
+        border-bottom: 1px solid var(--border);
+      }
+      pre#log {
+        flex: 1;
+        margin: 0;
+        padding: 12px 16px;
+        overflow: auto;
+        font-family: ui-monospace, "SF Mono", Menlo, monospace;
+        font-size: 11px;
+        line-height: 1.5;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+      .row {
+        padding: 8px 0;
+        border-bottom: 1px dashed var(--border);
+      }
+      .row:last-child {
+        border-bottom: 0;
+      }
+      .ts {
+        color: var(--muted);
+      }
+      .tag-out {
+        color: #3ce6ac;
+      }
+      .tag-in {
+        color: #ffb86b;
+      }
     </style>
   </head>
   <body>
     <iframe id="frame" src="http://localhost:5190/#project/kinetic-type"></iframe>
     <div class="rail">
-      <button id="toggle" class="toggle" title="Toggle debug panel" aria-label="Toggle debug panel">›</button>
+      <button id="toggle" class="toggle" title="Toggle debug panel" aria-label="Toggle debug panel">
+        ›
+      </button>
     </div>
     <aside id="panel">
       <div class="controls">
@@ -63,6 +201,7 @@
       <pre id="log"></pre>
     </aside>
     <script>
+      const STUDIO_READY = "RACCOON_MOTION_STUDIO_READY";
       const HOST_HELLO = "RACCOON_MOTION_HOST_HELLO";
       const EXPORT_REQUESTED = "RACCOON_EXPORT_REQUESTED";
       const AGENT_PROMPT_SUBMITTED = "RACCOON_AGENT_PROMPT_SUBMITTED";
@@ -101,6 +240,12 @@
       window.addEventListener("message", (event) => {
         if (event.source !== frame.contentWindow) return;
         if (typeof event.data !== "object" || event.data === null) return;
+        if (event.data.type === STUDIO_READY) {
+          // Studio's listener is now live — reply with HOST_HELLO.
+          append("in", event.data);
+          sendHello();
+          return;
+        }
         if (event.data.type === EXPORT_REQUESTED) {
           append("in", event.data);
           return;

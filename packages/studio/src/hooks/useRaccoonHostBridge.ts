@@ -1,13 +1,21 @@
 // CUSTOM-FORK: minimal postMessage bridge between Studio and the Raccoon host iframe.
 //
 // Protocol:
+//   Studio → host   RACCOON_MOTION_STUDIO_READY      (iframe ready; tells host the listener is live)
 //   host  → Studio  RACCOON_MOTION_HOST_HELLO        (handshake; flips isRaccoonHost true)
 //   Studio → host   RACCOON_EXPORT_REQUESTED         (header Export button)
 //   Studio → host   RACCOON_AGENT_PROMPT_SUBMITTED   (inline Ask Agent composer)
 //   host  → Studio  RACCOON_AGENT_PROMPT_ACK         (host acknowledges receipt of the prompt)
+//
+// The iframe's `load` event in the parent fires before React in this iframe
+// finishes mounting + attaching the message listener, so a host that ships
+// HOST_HELLO from `load` races us and the message gets dropped. The Studio
+// pings STUDIO_READY from `useEffect` (after the listener is registered) so
+// the host can reply on demand instead.
 
 import { useCallback, useEffect, useState } from "react";
 
+const STUDIO_READY = "RACCOON_MOTION_STUDIO_READY";
 const HOST_HELLO = "RACCOON_MOTION_HOST_HELLO";
 const EXPORT_REQUESTED = "RACCOON_EXPORT_REQUESTED";
 const AGENT_PROMPT_SUBMITTED = "RACCOON_AGENT_PROMPT_SUBMITTED";
@@ -73,6 +81,14 @@ export function useRaccoonHostBridge(): RaccoonHostBridge {
     }
 
     window.addEventListener("message", onMessage);
+    // Listener is live — tell the host we're ready so it can reply with
+    // HOST_HELLO. Without this ping, hosts that send HOST_HELLO on iframe
+    // `load` race the listener and the handshake never lands.
+    try {
+      window.parent.postMessage({ type: STUDIO_READY }, "*");
+    } catch {
+      // Cross-origin parents may throw on serialization edge cases — ignore.
+    }
     return () => window.removeEventListener("message", onMessage);
   }, []);
 
