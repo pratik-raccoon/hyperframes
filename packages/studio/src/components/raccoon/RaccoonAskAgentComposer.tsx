@@ -123,7 +123,9 @@ export function RaccoonAskAgentComposer({ bridge }: RaccoonAskAgentComposerProps
 
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-      if (event.key === "Enter" && !event.shiftKey) {
+      // Cmd+Enter on macOS / Ctrl+Enter elsewhere submits; plain Enter
+      // inserts a newline (textarea default) so multi-line prompts work.
+      if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
         event.preventDefault();
         handleSubmit();
       }
@@ -142,7 +144,7 @@ export function RaccoonAskAgentComposer({ bridge }: RaccoonAskAgentComposerProps
         onChange={(e) => setValue(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder={
-          domEditSelection ? "Ask agent to edit this element…" : "Select an element to ask agent"
+          domEditSelection ? "Ask agent to edit this element… " : "Select an element to ask agent"
         }
         disabled={!domEditSelection || submitting}
         ariaLabel="Ask agent prompt"
