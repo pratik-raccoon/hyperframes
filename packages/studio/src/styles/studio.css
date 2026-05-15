@@ -14,24 +14,33 @@
    * apps/web/src/app/theme.css in the Raccoon motion repo. The studio.*
    * Tailwind palette in tailwind.config.js reads from these vars, so all
    * 49+ existing bg-studio-accent / text-studio-accent usages reskin
-   * automatically. */
+   * automatically.
+   *
+   * HSL tokens are stored as bare components (no `hsl(...)` wrapper) so
+   * Tailwind can apply opacity modifiers via the `<alpha-value>`
+   * substitution (e.g. `bg-secondary/90`, `border-border/50`). Plain CSS
+   * consumers must wrap with `hsl(...)` themselves — see body below. */
   --raccoon: #5d5fef;
-  --raccoon-foreground: hsl(239, 82%, 65%);
-  --background: hsl(240, 6%, 10%);
-  --foreground: hsl(240, 5%, 80%);
-  --card: hsl(240, 6%, 12%);
-  --popover: hsl(240, 5%, 10%);
-  --muted: hsl(240, 6%, 14%);
-  --muted-foreground: hsl(240, 5%, 65%);
-  --border: hsl(240, 6%, 15%);
+  --raccoon-foreground: 239 82% 65%;
+  --background: 240 6% 10%;
+  --foreground: 240 5% 80%;
+  --card: 240 6% 12%;
+  --card-foreground: 240 5% 90%;
+  --popover: 240 5% 10%;
+  --popover-foreground: 240 5% 90%;
+  --muted: 240 6% 14%;
+  --muted-foreground: 240 5% 65%;
+  --secondary: var(--raccoon-foreground);
+  --secondary-foreground: 0 0% 100%;
+  --border: 240 6% 15%;
   --ring: var(--raccoon);
 }
 
 body {
   margin: 0;
   padding: 0;
-  background: var(--background);
-  color: var(--foreground);
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
   /* CUSTOM-FORK: Geist Sans loaded via Google Fonts CDN in index.html. */
   font-family:
     "Geist",

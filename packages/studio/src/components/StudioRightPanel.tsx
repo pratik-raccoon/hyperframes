@@ -10,8 +10,9 @@ import {
   STUDIO_MOTION_PANEL_ENABLED,
 } from "./editor/manualEditingAvailability";
 // CUSTOM-FORK: render queue requires local Chromium/FFmpeg — drop the tab
-// and the queue UI in the sandbox build. The Raccoon host handles export.
-import { SANDBOX_HIDES_EXPORT } from "../sandbox";
+// and the queue UI in the raccoon build. The Raccoon host handles export.
+import { RACCOON_HIDES_EXPORT } from "../raccoon";
+import type { RaccoonHostBridge } from "../hooks/useRaccoonHostBridge";
 import { useCallback } from "react";
 import { resolveDomEditSelection, type DomEditLayerItem } from "./editor/domEditing";
 import { useStudioContext } from "../contexts/StudioContext";
@@ -23,12 +24,16 @@ export interface StudioRightPanelProps {
   selectedStudioMotion: StudioGsapMotion | null;
   designPanelActive: boolean;
   motionPanelActive: boolean;
+  // CUSTOM-FORK: when present + isRaccoonHost, PropertyPanel swaps the Ask
+  // Agent button for the inline RaccoonAskAgentComposer.
+  raccoonHost?: RaccoonHostBridge | null;
 }
 
 export function StudioRightPanel({
   selectedStudioMotion,
   designPanelActive,
   motionPanelActive,
+  raccoonHost,
 }: StudioRightPanelProps) {
   const {
     rightWidth,
@@ -145,7 +150,7 @@ export function StudioRightPanel({
                   )}
                 </>
               )}
-              {!SANDBOX_HIDES_EXPORT && (
+              {!RACCOON_HIDES_EXPORT && (
                 <button
                   type="button"
                   onClick={() => setRightPanelTab("renders")}
@@ -185,6 +190,7 @@ export function StudioRightPanel({
                   onImportFonts={handleImportFonts}
                   activeCompositionPath={activeCompPath}
                   onSelectLayer={handleSelectLayer}
+                  raccoonHost={raccoonHost}
                 />
               ) : motionPanelActive ? (
                 <MotionPanel
@@ -194,7 +200,7 @@ export function StudioRightPanel({
                   onSetMotion={handleDomMotionCommit}
                   onClearMotion={handleDomMotionClear}
                 />
-              ) : SANDBOX_HIDES_EXPORT ? null : (
+              ) : RACCOON_HIDES_EXPORT ? null : (
                 <RenderQueue
                   jobs={renderJobs}
                   projectId={projectId}

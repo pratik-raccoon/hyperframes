@@ -1,27 +1,27 @@
 ---
 name: fork-release
-description: Cut a release on the Raccoon fork by building the Studio in sandbox mode, packing the CLI as a tarball, and attaching it to a GitHub Release via `gh`. Use when the fork ships its CLI as a pre-built `.tgz` consumed via `releases/latest/download/hyperframes-cli.tgz` instead of publishing to npm. Skip this skill for the upstream npm flow (`scripts/set-version.ts` + `.github/workflows/publish.yml`).
+description: Cut a release on the Raccoon fork by building the Studio in raccoon mode, packing the CLI as a tarball, and attaching it to a GitHub Release via `gh`. Use when the fork ships its CLI as a pre-built `.tgz` consumed via `releases/latest/download/hyperframes-cli.tgz` instead of publishing to npm. Skip this skill for the upstream npm flow (`scripts/set-version.ts` + `.github/workflows/publish.yml`).
 ---
 
 # Fork release
 
-Manual `gh` release flow for the Raccoon fork. The released CLI bundles the **Sandbox build** of the Studio (`vite build --mode sandbox`) so the iframe served from `releases/latest/download/hyperframes-cli.tgz` is the locked-down preview surface — no Capture, no Renders, no left sidebar. The asset URL `releases/latest/download/hyperframes-cli.tgz` always resolves to the newest release, so consumers don't need to know the tag.
+Manual `gh` release flow for the Raccoon fork. The released CLI bundles the **Raccoon build** of the Studio (`vite build --mode raccoon`) so the iframe served from `releases/latest/download/hyperframes-cli.tgz` is the locked-down preview surface — no Capture, no Renders, no left sidebar. The asset URL `releases/latest/download/hyperframes-cli.tgz` always resolves to the newest release, so consumers don't need to know the tag.
 
 ## Workflow
 
-### 1. Build the Studio in sandbox mode, then build the CLI
+### 1. Build the Studio in raccoon mode, then build the CLI
 
-The Studio's `vite build` defaults to the **Full build**. The Raccoon fork release needs the **Sandbox build**, so the studio step is run explicitly with `--mode sandbox` before the CLI is packed:
+The Studio's `vite build` defaults to the **Full build**. The Raccoon fork release needs the **Raccoon build**, so the studio step is run explicitly with `--mode raccoon` before the CLI is packed:
 
 ```bash
 bun install
 # Build deps the Studio + CLI need (skip the default studio build — we'll
-# rebuild it in sandbox mode immediately after).
+# rebuild it in raccoon mode immediately after).
 bun run --filter @hyperframes/core build
 bun run --filter '@hyperframes/{engine,producer,player,shader-transitions}' build
-# Studio in sandbox mode — loads packages/studio/.env.sandbox and turns on
-# all SANDBOX_HIDES_* gates derived from VITE_STUDIO_SANDBOX.
-bun run --cwd packages/studio build --mode sandbox
+# Studio in raccoon mode — loads packages/studio/.env.raccoon and turns on
+# all RACCOON_HIDES_* gates derived from VITE_STUDIO_RACCOON.
+bun run --cwd packages/studio build --mode raccoon
 # CLI build copies the just-built studio/dist into its own dist/.
 bun run --filter @hyperframes/cli build
 # Pack the tarball.
@@ -31,7 +31,7 @@ mv packages/cli/hyperframes-cli-*.tgz /tmp/hyperframes-cli.tgz
 
 `bun pm pack` writes `hyperframes-cli-<package.json-version>.tgz`. Move it out of the worktree (we attach it to the GH Release directly — never commit the binary, see Things to know below).
 
-Quick sanity check that the bundled studio is the sandbox build:
+Quick sanity check that the bundled studio is the raccoon build:
 
 ```bash
 unzip -p /tmp/hyperframes-cli.tgz package/dist/studio/index.html | grep -q "Geist" \
@@ -94,7 +94,7 @@ find packages/cli -maxdepth 1 -name 'hyperframes-cli-*.tgz' -delete 2>/dev/null 
 
 ## Things to know
 
-- **The released Studio is the Sandbox build.** Capture, Renders, the left sidebar, composition thumbnails, the header logo and the preview-zoom HUD are all gated off via the `SANDBOX_HIDES_*` constants in `packages/studio/src/sandbox.ts`. Do not skip the `--mode sandbox` step or the iframe will ship the Full build by mistake.
+- **The released Studio is the Raccoon build.** Capture, Renders, the left sidebar, composition thumbnails, the header logo and the preview-zoom HUD are all gated off via the `RACCOON_HIDES_*` constants in `packages/studio/src/raccoon.ts`. Do not skip the `--mode raccoon` step or the iframe will ship the Full build by mistake.
 - **Do not commit the tarball.** The GH Release asset is the canonical source — committing on every release just bloats history with megabytes of binary diff. Keep it under `/tmp/` or another out-of-tree location.
 - **Do not bump `package.json` versions.** A fork release re-tags the same upstream version with a fork-specific suffix; the actual workspace versions stay pinned to whatever upstream the fork last merged.
 - **Do not run `scripts/set-version.ts` or expect `.github/workflows/publish.yml` to do the work.** Those drive the upstream npm publish flow and don't apply here. If `publish.yml` fires on the tag push and fails validation, that's expected — ignore it.

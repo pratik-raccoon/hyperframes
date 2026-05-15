@@ -1,5 +1,5 @@
 import type { MouseEvent } from "react";
-import { RotateCcw, RotateCw, Camera } from "../icons/SystemIcons";
+import { RotateCcw, RotateCw, Camera, Download } from "../icons/SystemIcons";
 import {
   STUDIO_INSPECTOR_PANELS_ENABLED,
   STUDIO_MANUAL_EDITING_DISABLED_TITLE,
@@ -8,8 +8,8 @@ import { getHistoryShortcutLabel } from "../utils/studioHelpers";
 import { useStudioContext } from "../contexts/StudioContext";
 import { usePanelLayoutContext } from "../contexts/PanelLayoutContext";
 import { useDomEditContext } from "../contexts/DomEditContext";
-// CUSTOM-FORK: sandbox feature gates.
-import { SANDBOX_HIDES_CAPTURE, SANDBOX_HIDES_HEADER_LOGO } from "../sandbox";
+// CUSTOM-FORK: raccoon feature gates.
+import { RACCOON_HIDES_CAPTURE, RACCOON_HIDES_HEADER_LOGO } from "../raccoon";
 
 export interface StudioHeaderProps {
   captureFrameHref: string;
@@ -162,9 +162,9 @@ export function StudioHeader({
     <div className="flex items-center justify-between h-10 px-3 bg-neutral-900 border-b border-neutral-800 flex-shrink-0">
       {/* Left: logo + project name */}
       <div className="flex items-center gap-3">
-        {/* CUSTOM-FORK: hide the Hyperframes wordmark in the sandbox build —
+        {/* CUSTOM-FORK: hide the Hyperframes wordmark in the raccoon build —
          * the Raccoon host already brands the surrounding chrome. */}
-        {!SANDBOX_HIDES_HEADER_LOGO && (
+        {!RACCOON_HIDES_HEADER_LOGO && (
           <>
             <HyperframesLogo />
             <span className="text-neutral-700 select-none" aria-hidden="true">
@@ -213,8 +213,8 @@ export function StudioHeader({
           <RotateCw size={14} />
         </button>
         {/* CUSTOM-FORK: Capture button needs local browser to render the frame —
-         * unavailable in the sandbox build. */}
-        {!SANDBOX_HIDES_CAPTURE && (
+         * unavailable in the raccoon build. */}
+        {!RACCOON_HIDES_CAPTURE && (
           <a
             href={captureFrameHref}
             download={captureFrameFilename}
@@ -236,10 +236,11 @@ export function StudioHeader({
           <button
             type="button"
             onClick={onRequestExport}
-            className="h-7 flex items-center gap-1.5 px-3 rounded-md text-[11px] font-medium bg-studio-accent text-white transition-colors hover:opacity-90"
+            className="h-7 flex items-center gap-1.5 px-2.5 rounded-md text-[11px] font-medium border border-neutral-700 text-neutral-300 transition-colors hover:border-neutral-500 hover:bg-neutral-800"
             title="Export"
             aria-label="Export"
           >
+            <Download size={14} />
             <span>Export</span>
           </button>
         )}

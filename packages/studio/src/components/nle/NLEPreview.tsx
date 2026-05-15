@@ -9,8 +9,6 @@ import {
   type PreviewZoomState,
 } from "./previewZoom";
 import { readStudioUiPreferences, writeStudioUiPreferences } from "../../utils/studioUiPreferences";
-// CUSTOM-FORK: lock preview zoom in the sandbox build — gestures, drag-pan and the HUD all suppressed.
-import { SANDBOX_HIDES_PREVIEW_ZOOM } from "../../sandbox";
 
 interface NLEPreviewProps {
   projectId: string;
@@ -158,7 +156,6 @@ export const NLEPreview = memo(function NLEPreview({
   };
 
   useEffect(() => {
-    if (SANDBOX_HIDES_PREVIEW_ZOOM) return;
     const viewport = viewportRef.current;
     if (!viewport) return;
 
@@ -203,7 +200,6 @@ export const NLEPreview = memo(function NLEPreview({
   }, [applyZoom]);
 
   useEffect(() => {
-    if (SANDBOX_HIDES_PREVIEW_ZOOM) return;
     const viewport = viewportRef.current;
     if (!viewport) return;
 
@@ -226,7 +222,6 @@ export const NLEPreview = memo(function NLEPreview({
   }, [applyZoom]);
 
   const handlePointerDown = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
-    if (SANDBOX_HIDES_PREVIEW_ZOOM) return;
     if (zoomRef.current.zoomPercent <= 100 || event.button !== 0) return;
     event.currentTarget.setPointerCapture(event.pointerId);
     dragRef.current = {
@@ -316,14 +311,12 @@ export const NLEPreview = memo(function NLEPreview({
             suppressLoadingOverlay={suppressLoadingOverlay}
           />
         </div>
-        {!SANDBOX_HIDES_PREVIEW_ZOOM && (
-          <div
-            ref={hudRef}
-            className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 rounded-lg px-4 py-2 text-sm font-mono tabular-nums text-white/90 bg-black/60 backdrop-blur-sm shadow-lg"
-            style={{ opacity: 0, transition: "opacity 300ms ease-out" }}
-            aria-live="polite"
-          />
-        )}
+        <div
+          ref={hudRef}
+          className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 rounded-lg px-4 py-2 text-sm font-mono tabular-nums text-white/90 bg-black/60 backdrop-blur-sm shadow-lg"
+          style={{ opacity: 0, transition: "opacity 300ms ease-out" }}
+          aria-live="polite"
+        />
       </div>
     </div>
   );

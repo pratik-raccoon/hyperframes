@@ -1,14 +1,14 @@
 import { useState, useCallback, useRef } from "react";
 import type { RightPanelTab } from "../utils/studioHelpers";
 import { readStudioUiPreferences, writeStudioUiPreferences } from "../utils/studioUiPreferences";
-// CUSTOM-FORK: collapse the left sidebar by default in the sandbox build.
-import { IS_SANDBOX_BUILD } from "../sandbox";
+// CUSTOM-FORK: collapse the left sidebar by default in the raccoon build.
+import { IS_RACCOON_BUILD } from "../raccoon";
 
 export function usePanelLayout() {
   const [leftWidth, setLeftWidth] = useState(240);
   const [rightWidth, setRightWidth] = useState(400);
   const [leftCollapsed, setLeftCollapsed] = useState(
-    () => IS_SANDBOX_BUILD || (readStudioUiPreferences().leftCollapsed ?? false),
+    () => IS_RACCOON_BUILD || (readStudioUiPreferences().leftCollapsed ?? false),
   );
   const [rightCollapsed, setRightCollapsed] = useState(true);
   const [rightPanelTab, setRightPanelTab] = useState<RightPanelTab>("renders");
