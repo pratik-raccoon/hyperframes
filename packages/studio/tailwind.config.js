@@ -10,15 +10,25 @@ export default {
     extend: {
       colors: {
         // CUSTOM-FORK: Tailwind's default `neutral` ramp is pure grayscale
-        // match dark theme of raccoon as hyperframes studio defines the tokens for dark theme but really uses tailwind native neutral colors.
+        // (hue 0, sat 0%). Motion's .dark palette in apps/web/src/app/theme.css
+        // is hue-tinted (hue 240, sat 5–6%), so the studio's bg-neutral-950,
+        // bg-neutral-900, border-neutral-800 etc. used to render "colder
+        // gray" than the surrounding motion chrome.
+        //
+        // The override is intentionally narrow: only the 4 darkest stops
+        // (700–950) are re-pinned. Across the studio, 700+ shades are
+        // overwhelmingly surfaces/borders (~270 callsites); 600 and below
+        // are overwhelmingly text (~330 callsites that were hand-tuned
+        // against Tailwind's default grayscale). Re-pinning only 700–950
+        // reskins all surfaces to match motion's .dark without shifting any
+        // of the text contrast.
+        //
+        // Anchors:
+        //   950 = motion --background  (hsl(240 6% 10%))
+        //   900 = motion --card        (hsl(240 6% 12%))
+        //   800 = motion --border      (hsl(240 6% 15%))
+        //   700 fills the gap between 800 and the unchanged 600 below it.
         neutral: {
-          50: "hsl(240 5% 96% / <alpha-value>)",
-          100: "hsl(240 5% 92% / <alpha-value>)",
-          200: "hsl(240 5% 88% / <alpha-value>)",
-          300: "hsl(240 5% 80% / <alpha-value>)",
-          400: "hsl(240 5% 72% / <alpha-value>)",
-          500: "hsl(240 5% 65% / <alpha-value>)",
-          600: "hsl(240 5% 40% / <alpha-value>)",
           700: "hsl(240 5% 25% / <alpha-value>)",
           800: "hsl(240 6% 15% / <alpha-value>)",
           900: "hsl(240 6% 12% / <alpha-value>)",
