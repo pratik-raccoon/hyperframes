@@ -34,7 +34,7 @@ mv packages/cli/hyperframes-cli-*.tgz /tmp/hyperframes-cli.tgz
 Quick sanity check that the bundled studio is the raccoon build:
 
 ```bash
-unzip -p /tmp/hyperframes-cli.tgz package/dist/studio/index.html | grep -q "Geist" \
+tar -xzOf /tmp/hyperframes-cli.tgz package/dist/studio/index.html | grep -q "Geist" \
   && echo "ok: theme bundled" \
   || echo "FAIL: studio dist looks wrong"
 ```
