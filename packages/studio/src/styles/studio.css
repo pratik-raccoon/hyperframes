@@ -61,6 +61,43 @@ body {
   overflow: hidden;
 }
 
+/* CUSTOM-FORK: scrollbar treatment mirrored from
+ * apps/web/src/app/globals.css in the Raccoon motion repo: ultra-thin
+ * (2px), transparent track, semi-transparent thumb. The studio renders
+ * with effectively-dark surfaces (bg-neutral-* hardcodes), so the
+ * default thumb uses motion's dark-mode color directly — once a real
+ * light/dark bridge is wired, this can split back into :root / .dark. */
+::-webkit-scrollbar {
+  width: 2px;
+  height: 2px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+/* CUSTOM-FORK: .no-scrollbar utility used by the ported Composer +
+ * CustomTextarea (raccoon mode) but never previously defined in the
+ * studio — falling back to default browser scrollbars on textareas. */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 #root {
   width: 100vw;
   /*
