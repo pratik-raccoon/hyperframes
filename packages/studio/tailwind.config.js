@@ -9,6 +9,21 @@ export default {
   theme: {
     extend: {
       colors: {
+        // CUSTOM-FORK: Tailwind's default `neutral` ramp is pure grayscale
+        // match dark theme of raccoon as hyperframes studio defines the tokens for dark theme but really uses tailwind native neutral colors.
+        neutral: {
+          50: "hsl(240 5% 96% / <alpha-value>)",
+          100: "hsl(240 5% 92% / <alpha-value>)",
+          200: "hsl(240 5% 88% / <alpha-value>)",
+          300: "hsl(240 5% 80% / <alpha-value>)",
+          400: "hsl(240 5% 72% / <alpha-value>)",
+          500: "hsl(240 5% 65% / <alpha-value>)",
+          600: "hsl(240 5% 40% / <alpha-value>)",
+          700: "hsl(240 5% 25% / <alpha-value>)",
+          800: "hsl(240 6% 15% / <alpha-value>)",
+          900: "hsl(240 6% 12% / <alpha-value>)",
+          950: "hsl(240 6% 10% / <alpha-value>)",
+        },
         // CUSTOM-FORK: studio.* palette wired to Raccoon theme tokens
         // defined on :root in src/styles/studio.css. Reskinning the fork is
         // a single edit to those vars — no component touches needed.
