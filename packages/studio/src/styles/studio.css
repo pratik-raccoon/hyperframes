@@ -3,30 +3,21 @@
 @tailwind utilities;
 
 /*
- * CUSTOM-FORK: Raccoon theme tokens — mirrors apps/web/src/app/theme.css
- * in the Raccoon repo. Light (`:root`) and dark (`.dark`) blocks
- * are kept in lockstep with apps/web theme.css so the embedded studio
+ * CUSTOM-FORK: Raccoon theme tokens — mirrors the `.dark` block of
+ * apps/web/src/app/theme.css in the Raccoon repo. The studio renders
+ * dark-only (nothing in this fork toggles `.dark` on the iframe's
+ * <html>), so the dark token values are pinned directly to `:root` to
+ * avoid the "light tokens silently winning" failure mode where token-
+ * driven classes like `text-foreground` would resolve to dark text on
+ * dark surfaces. If real light/dark theming is wired through the host
+ * bridge later, restore the `:root` light + `.dark` dark split.
+ *
+ * HSL tokens are stored as bare components (no `hsl(...)` wrapper) so
+ * Tailwind can apply opacity modifiers via the `<alpha-value>`
+ * substitution (e.g. `bg-secondary/90`, `border-border/50`). Plain CSS
+ * consumers must wrap with `hsl(...)` themselves — see body below.
  */
 :root {
-  color-scheme: light;
-
-  --raccoon: #5d5fef;
-  --raccoon-foreground: 239 82% 65%;
-  --background: 0 0% 98%;
-  --foreground: 240 3% 20%;
-  --card: 0 0% 100%;
-  --card-foreground: 240 3% 20%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 240 3% 20%;
-  --muted: 240 2% 96%;
-  --muted-foreground: 240 2% 40%;
-  --secondary: var(--raccoon-foreground);
-  --secondary-foreground: 0 0% 100%;
-  --border: 240 2% 90%;
-  --ring: var(--raccoon);
-}
-
-.dark {
   color-scheme: dark;
 
   --raccoon: #5d5fef;
