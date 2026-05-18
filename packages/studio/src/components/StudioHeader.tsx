@@ -46,8 +46,8 @@ function HyperframesLogo() {
           y2="37.482"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stopColor="#06E3FA" />
-          <stop offset="1" stopColor="#4FDB5E" />
+          <stop stopColor="#8C8EF5" />
+          <stop offset="1" stopColor="#5D5FEF" />
         </linearGradient>
         <linearGradient
           id="hf-g1"
@@ -57,8 +57,8 @@ function HyperframesLogo() {
           y2="6.303"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stopColor="#06E3FA" />
-          <stop offset="1" stopColor="#4FDB5E" />
+          <stop stopColor="#8C8EF5" />
+          <stop offset="1" stopColor="#5D5FEF" />
         </linearGradient>
       </defs>
       {/* heygen label */}

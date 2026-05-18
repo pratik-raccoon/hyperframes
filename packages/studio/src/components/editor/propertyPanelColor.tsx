@@ -71,7 +71,7 @@ export function ColorSlider({
         aria-valuemax={max}
         aria-valuenow={value}
         aria-disabled={disabled}
-        className={`relative h-4 rounded-full border border-neutral-700 shadow-[inset_0_1px_2px_rgba(0,0,0,0.55)] outline-none focus:border-[#f5a400] focus:ring-2 focus:ring-[#f5a400]/40 ${
+        className={`relative h-4 rounded-full border border-neutral-700 shadow-[inset_0_1px_2px_rgba(0,0,0,0.55)] outline-none focus:border-studio-accent focus:ring-2 focus:ring-studio-accent/40 ${
           disabled ? "cursor-not-allowed opacity-50" : "cursor-ew-resize"
         }`}
         style={{ background }}

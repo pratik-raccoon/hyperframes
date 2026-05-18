@@ -48,7 +48,12 @@ export default {
           border: "hsl(var(--border) / <alpha-value>)",
           text: "hsl(var(--foreground) / <alpha-value>)",
           muted: "hsl(var(--muted-foreground) / <alpha-value>)",
-          accent: "var(--raccoon)",
+          // CUSTOM-FORK: drive studio.accent from --raccoon-foreground so
+          // Tailwind opacity modifiers (`bg-studio-accent/15`,
+          // `outline-studio-accent/30`) emit correct alpha. The bare
+          // `var(--raccoon)` form short-circuits the `<alpha-value>`
+          // substitution and silently drops opacity at the callsite.
+          accent: "hsl(var(--raccoon-foreground) / <alpha-value>)",
         },
         raccoon: "var(--raccoon)",
         // CUSTOM-FORK: extra theme tokens used by the ported Composer +

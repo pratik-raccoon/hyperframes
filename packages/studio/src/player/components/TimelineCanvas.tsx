@@ -392,9 +392,9 @@ export const TimelineCanvas = memo(function TimelineCanvas({
             width: Math.abs(rangeSelection.end - rangeSelection.start) * pps,
             top: RULER_H,
             bottom: 0,
-            backgroundColor: "rgba(59, 130, 246, 0.12)",
-            borderLeft: "1px solid rgba(59, 130, 246, 0.4)",
-            borderRight: "1px solid rgba(59, 130, 246, 0.4)",
+            backgroundColor: "hsl(var(--raccoon-foreground) / 0.12)",
+            borderLeft: "1px solid hsl(var(--raccoon-foreground) / 0.4)",
+            borderRight: "1px solid hsl(var(--raccoon-foreground) / 0.4)",
             zIndex: 50,
           }}
         />
@@ -412,8 +412,8 @@ export const TimelineCanvas = memo(function TimelineCanvas({
             left: "50%",
             width: 2,
             marginLeft: -1,
-            background: "var(--hf-accent, #3CE6AC)",
-            boxShadow: "0 0 8px rgba(60,230,172,0.5)",
+            background: "var(--raccoon)",
+            boxShadow: "0 0 8px hsl(var(--raccoon-foreground) / 0.5)",
           }}
         />
         <div className="absolute" style={{ left: "50%", top: 0, transform: "translateX(-50%)" }}>
@@ -423,7 +423,7 @@ export const TimelineCanvas = memo(function TimelineCanvas({
               height: 0,
               borderLeft: "6px solid transparent",
               borderRight: "6px solid transparent",
-              borderTop: "8px solid var(--hf-accent, #3CE6AC)",
+              borderTop: "8px solid var(--raccoon)",
               filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.6))",
             }}
           />

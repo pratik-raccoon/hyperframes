@@ -314,12 +314,24 @@ export const PlayerControls = memo(function PlayerControls({
         style={{ background: "rgba(255,255,255,0.06)" }}
       >
         {isPlaying ? (
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="#FAFAFA" aria-hidden="true">
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 24 24"
+            className="fill-neutral-50"
+            aria-hidden="true"
+          >
             <rect x="6" y="4" width="4" height="16" rx="1" />
             <rect x="14" y="4" width="4" height="16" rx="1" />
           </svg>
         ) : (
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="#FAFAFA" aria-hidden="true">
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 24 24"
+            className="fill-neutral-50"
+            aria-hidden="true"
+          >
             <polygon points="6,3 20,12 6,21" />
           </svg>
         )}
@@ -331,19 +343,18 @@ export const PlayerControls = memo(function PlayerControls({
         onClick={() => setTimeDisplayMode((m) => (m === "time" ? "frame" : "time"))}
         disabled={disabled}
         title={timeDisplayMode === "time" ? "Switch to frame display" : "Switch to time display"}
-        className="font-mono text-[11px] tabular-nums flex-shrink-0 w-[118px] text-left transition-colors disabled:pointer-events-none hover:opacity-80"
-        style={{ color: "#A1A1AA", cursor: "pointer" }}
+        className="font-mono text-[11px] tabular-nums flex-shrink-0 w-[118px] text-left text-neutral-400 transition-colors disabled:pointer-events-none hover:opacity-80"
       >
         <span ref={timeDisplayRef}>{formatTime(0)}</span>
         {timeDisplayMode === "time" ? (
           <>
-            <span style={{ color: "#3F3F46", margin: "0 2px" }}>/</span>
-            <span style={{ color: "#52525B" }}>{formatTime(duration)}</span>
+            <span className="mx-0.5 text-neutral-700">/</span>
+            <span className="text-neutral-600">{formatTime(duration)}</span>
           </>
         ) : null}
       </button>
 
-      {/* Seek bar — teal progress fill */}
+      {/* Seek bar — raccoon progress fill */}
       <div
         ref={(el) => {
           (seekBarRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
@@ -378,7 +389,7 @@ export const PlayerControls = memo(function PlayerControls({
               style={{
                 left: `${inPoint !== null ? Math.min(100, (inPoint / duration) * 100) : 0}%`,
                 right: `${outPoint !== null ? 100 - Math.min(100, (outPoint / duration) * 100) : 0}%`,
-                background: "rgba(60,230,172,0.15)",
+                background: "hsl(var(--raccoon-foreground) / 0.15)",
               }}
             />
           )}
@@ -386,7 +397,10 @@ export const PlayerControls = memo(function PlayerControls({
           <div
             ref={progressFillRef}
             className="absolute top-0 bottom-0 left-0 z-[1] rounded-full"
-            style={{ background: "linear-gradient(90deg, var(--hf-accent, #3CE6AC), #2BBFA0)" }}
+            style={{
+              background:
+                "linear-gradient(90deg, var(--raccoon), color-mix(in srgb, var(--raccoon) 65%, #000))",
+            }}
           />
           {/* In-point marker */}
           {inPoint !== null && duration > 0 && (
@@ -398,7 +412,7 @@ export const PlayerControls = memo(function PlayerControls({
                 transform: "translate(-50%, -50%)",
                 width: "2px",
                 height: "10px",
-                background: "#3CE6AC",
+                background: "var(--raccoon)",
                 borderRadius: "1px",
               }}
             />
@@ -413,7 +427,7 @@ export const PlayerControls = memo(function PlayerControls({
                 transform: "translate(-50%, -50%)",
                 width: "2px",
                 height: "10px",
-                background: "#3CE6AC",
+                background: "var(--raccoon)",
                 borderRadius: "1px",
               }}
             />
@@ -423,8 +437,8 @@ export const PlayerControls = memo(function PlayerControls({
             ref={progressThumbRef}
             className="absolute top-1/2 z-[4] w-3 h-3 rounded-full -translate-y-1/2 -translate-x-1/2 transition-transform group-hover:scale-125"
             style={{
-              background: "var(--hf-accent, #3CE6AC)",
-              boxShadow: "0 0 6px rgba(60,230,172,0.4), 0 1px 4px rgba(0,0,0,0.4)",
+              background: "var(--raccoon)",
+              boxShadow: "0 0 6px hsl(var(--raccoon-foreground) / 0.4), 0 1px 4px rgba(0,0,0,0.4)",
             }}
           />
         </div>
@@ -487,16 +501,13 @@ export const PlayerControls = memo(function PlayerControls({
           type="button"
           onClick={() => setShowSpeedMenu((v) => !v)}
           disabled={disabled}
-          className="w-10 px-2 py-1 rounded-md text-[10px] font-mono tabular-nums transition-colors"
-          style={{ color: "#71717A", background: "rgba(255,255,255,0.04)" }}
+          className="w-10 px-2 py-1 rounded-md text-[10px] font-mono tabular-nums text-neutral-500 transition-colors"
+          style={{ background: "rgba(255,255,255,0.04)" }}
         >
           {playbackRate === 1 ? "1x" : `${playbackRate}x`}
         </button>
         {showSpeedMenu && (
-          <div
-            className="absolute bottom-full right-0 mb-1.5 rounded-lg shadow-xl z-50 min-w-[56px] overflow-hidden"
-            style={{ background: "#161618", border: "1px solid rgba(255,255,255,0.08)" }}
-          >
+          <div className="absolute bottom-full right-0 mb-1.5 rounded-lg shadow-xl z-50 min-w-[56px] overflow-hidden bg-neutral-900 border border-white/[0.08]">
             {SPEED_OPTIONS.map((rate) => (
               <button
                 key={rate}
@@ -504,9 +515,10 @@ export const PlayerControls = memo(function PlayerControls({
                   setPlaybackRate(rate);
                   setShowSpeedMenu(false);
                 }}
-                className="block w-full px-3 py-1.5 text-[11px] text-left font-mono tabular-nums transition-colors"
+                className={`block w-full px-3 py-1.5 text-[11px] text-left font-mono tabular-nums transition-colors ${
+                  rate === playbackRate ? "text-neutral-50" : "text-neutral-500"
+                }`}
                 style={{
-                  color: rate === playbackRate ? "#FAFAFA" : "#71717A",
                   background: rate === playbackRate ? "rgba(255,255,255,0.06)" : "transparent",
                 }}
                 onMouseEnter={(e) => {
@@ -585,10 +597,8 @@ export const PlayerControls = memo(function PlayerControls({
         </button>
         {showShortcuts && (
           <div
-            className="absolute bottom-full right-0 mb-2 z-50 rounded-lg shadow-xl min-w-[220px] overflow-y-auto"
+            className="absolute bottom-full right-0 mb-2 z-50 rounded-lg shadow-xl min-w-[220px] overflow-y-auto bg-neutral-900 border border-white/[0.08]"
             style={{
-              background: "#161618",
-              border: "1px solid rgba(255,255,255,0.08)",
               maxHeight: "min(280px, calc(100vh - 80px))",
             }}
           >

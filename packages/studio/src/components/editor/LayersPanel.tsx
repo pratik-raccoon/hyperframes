@@ -247,7 +247,7 @@ export const LayersPanel = memo(function LayersPanel() {
                   selected
                     ? "bg-studio-accent/18 text-studio-accent"
                     : isCompHost
-                      ? "bg-blue-900/40 text-blue-400"
+                      ? "bg-studio-accent/[0.08] text-studio-accent/70"
                       : "bg-neutral-800 text-neutral-500"
                 }`}
               >

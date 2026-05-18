@@ -6,7 +6,10 @@ import { useCaptionStore } from "../store";
 // ---------------------------------------------------------------------------
 
 const GROUP_COLORS = [
-  "#3CE6AC",
+  // CUSTOM-FORK: first slot is the raccoon accent so the default caption
+  // group matches the rest of the chrome. Remaining slots stay as the
+  // distinct upstream palette so multi-group captions keep visual separation.
+  "#5D5FEF",
   "#FF6B6B",
   "#4ECDC4",
   "#FFE66D",
