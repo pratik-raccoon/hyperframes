@@ -9,6 +9,10 @@ import {
   STUDIO_INSPECTOR_PANELS_ENABLED,
   STUDIO_MOTION_PANEL_ENABLED,
 } from "./editor/manualEditingAvailability";
+// CUSTOM-FORK: render queue requires local Chromium/FFmpeg — drop the tab
+// and the queue UI in the raccoon build. The Raccoon host handles export.
+import { RACCOON_HIDES_EXPORT } from "../raccoon";
+import type { RaccoonHostBridge } from "../hooks/useRaccoonHostBridge";
 import { useCallback } from "react";
 import { resolveDomEditSelection, type DomEditLayerItem } from "./editor/domEditing";
 import { useStudioContext } from "../contexts/StudioContext";
@@ -20,12 +24,16 @@ export interface StudioRightPanelProps {
   selectedStudioMotion: StudioGsapMotion | null;
   designPanelActive: boolean;
   motionPanelActive: boolean;
+  // CUSTOM-FORK: when present + isRaccoonHost, PropertyPanel swaps the Ask
+  // Agent button for the inline RaccoonAskAgentComposer.
+  raccoonHost?: RaccoonHostBridge | null;
 }
 
 export function StudioRightPanel({
   selectedStudioMotion,
   designPanelActive,
   motionPanelActive,
+  raccoonHost,
 }: StudioRightPanelProps) {
   const {
     rightWidth,
@@ -94,7 +102,7 @@ export function StudioRightPanel({
         <div className="h-[52px] w-px bg-white/12 transition-colors group-hover:bg-white/18 group-active:bg-white/24" />
       </div>
       <div
-        className="flex flex-col border-l border-neutral-800 bg-neutral-900 flex-shrink-0"
+        className="flex flex-col border-l border-neutral-800 bg-neutral-950 flex-shrink-0"
         style={{ width: rightWidth }}
       >
         {captionEditMode ? (
@@ -141,17 +149,19 @@ export function StudioRightPanel({
                   )}
                 </>
               )}
-              <button
-                type="button"
-                onClick={() => setRightPanelTab("renders")}
-                className={`h-8 rounded-xl px-3 text-[11px] font-medium transition-colors ${
-                  rightPanelTab === "renders"
-                    ? "bg-neutral-800 text-white"
-                    : "text-neutral-500 hover:bg-neutral-800/70 hover:text-neutral-200"
-                }`}
-              >
-                {renderJobs.length > 0 ? `Renders (${renderJobs.length})` : "Renders"}
-              </button>
+              {!RACCOON_HIDES_EXPORT && (
+                <button
+                  type="button"
+                  onClick={() => setRightPanelTab("renders")}
+                  className={`h-8 rounded-xl px-3 text-[11px] font-medium transition-colors ${
+                    rightPanelTab === "renders"
+                      ? "bg-neutral-800 text-white"
+                      : "text-neutral-500 hover:bg-neutral-800/70 hover:text-neutral-200"
+                  }`}
+                >
+                  {renderJobs.length > 0 ? `Renders (${renderJobs.length})` : "Renders"}
+                </button>
+              )}
             </div>
             <div className="min-h-0 flex-1">
               {rightPanelTab === "layers" ? (
@@ -178,6 +188,7 @@ export function StudioRightPanel({
                   onImportFonts={handleImportFonts}
                   activeCompositionPath={activeCompPath}
                   onSelectLayer={handleSelectLayer}
+                  raccoonHost={raccoonHost}
                 />
               ) : motionPanelActive ? (
                 <MotionPanel
@@ -187,7 +198,7 @@ export function StudioRightPanel({
                   onSetMotion={handleDomMotionCommit}
                   onClearMotion={handleDomMotionClear}
                 />
-              ) : (
+              ) : RACCOON_HIDES_EXPORT ? null : (
                 <RenderQueue
                   jobs={renderJobs}
                   projectId={projectId}

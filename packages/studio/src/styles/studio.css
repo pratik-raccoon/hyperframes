@@ -3,21 +3,101 @@
 @tailwind utilities;
 
 /*
- * Studio is a dark-only UI — pin the user-agent color scheme to dark so that
- * browser-native chrome (scrollbars, form controls, focus rings) picks the
- * matching palette instead of defaulting to light against our #0a0a0a body.
+ * CUSTOM-FORK: Raccoon theme tokens — mirrors the `.dark` block of
+ * apps/web/src/app/theme.css in the Raccoon repo. The studio renders
+ * dark-only (nothing in this fork toggles `.dark` on the iframe's
+ * <html>), so the dark token values are pinned directly to `:root` to
+ * avoid the "light tokens silently winning" failure mode where token-
+ * driven classes like `text-foreground` would resolve to dark text on
+ * dark surfaces. If real light/dark theming is wired through the host
+ * bridge later, restore the `:root` light + `.dark` dark split.
+ *
+ * HSL tokens are stored as bare components (no `hsl(...)` wrapper) so
+ * Tailwind can apply opacity modifiers via the `<alpha-value>`
+ * substitution (e.g. `bg-secondary/90`, `border-border/50`). Plain CSS
+ * consumers must wrap with `hsl(...)` themselves — see body below.
  */
 :root {
   color-scheme: dark;
+
+  --raccoon: #5d5fef;
+  --raccoon-foreground: 239 82% 65%;
+  --background: 240 6% 10%;
+  --foreground: 240 5% 80%;
+  --card: 240 6% 12%;
+  --card-foreground: 240 5% 90%;
+  --popover: 240 5% 10%;
+  --popover-foreground: 240 5% 90%;
+  --muted: 240 6% 14%;
+  --muted-foreground: 240 5% 65%;
+  --secondary: var(--raccoon-foreground);
+  --secondary-foreground: 0 0% 100%;
+  --border: 240 6% 15%;
+  --ring: var(--raccoon);
+
+  /* CUSTOM-FORK: pin the legacy --hf-* surface to raccoon tokens so the
+   * eight `var(--hf-accent, #3CE6AC)` callsites in PlayerControls /
+   * TimelineCanvas / CaptionOverlay / TimelineEditorNotice and the three
+   * loader-text fallbacks below resolve to raccoon instead of the upstream
+   * teal. Define here rather than at the consumers so a future palette
+   * change is still a single edit. */
+  --hf-accent: var(--raccoon);
+  --hf-heading: hsl(var(--foreground));
+  --hf-text-secondary: hsl(var(--muted-foreground));
+  --hf-text-tertiary: hsl(var(--muted-foreground) / 0.7);
 }
 
 body {
   margin: 0;
   padding: 0;
-  background: #0a0a0a;
-  color: #e5e5e5;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  /* CUSTOM-FORK: Geist Sans loaded via Google Fonts CDN in index.html. */
+  font-family:
+    "Geist",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
   overflow: hidden;
+}
+
+/* CUSTOM-FORK: scrollbar treatment mirrored from
+ * apps/web/src/app/globals.css in the Raccoon motion repo: ultra-thin
+ * (2px), transparent track, semi-transparent thumb. The studio renders
+ * with effectively-dark surfaces (bg-neutral-* hardcodes), so the
+ * default thumb uses motion's dark-mode color directly — once a real
+ * light/dark bridge is wired, this can split back into :root / .dark. */
+::-webkit-scrollbar {
+  width: 2px;
+  height: 2px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+/* CUSTOM-FORK: .no-scrollbar utility used by the ported Composer +
+ * CustomTextarea (raccoon mode) but never previously defined in the
+ * studio — falling back to default browser scrollbars on textareas. */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 #root {
@@ -43,7 +123,8 @@ body {
 }
 
 .cm-editor .cm-scroller {
-  font-family: "JetBrains Mono", "Fira Code", "SF Mono", monospace;
+  /* CUSTOM-FORK: prefer Geist Mono when available. */
+  font-family: "Geist Mono", "JetBrains Mono", "Fira Code", "SF Mono", monospace;
 }
 
 .cm-editor.cm-focused {
@@ -93,7 +174,7 @@ body {
 .hf-loader-mark {
   display: block;
   overflow: visible;
-  filter: drop-shadow(0 0 7px rgba(79, 219, 94, 0.2));
+  filter: drop-shadow(0 0 7px rgba(93, 95, 239, 0.28));
   user-select: none;
   -webkit-user-select: none;
   -webkit-user-drag: none;
@@ -101,6 +182,7 @@ body {
 
 .hf-loader-title {
   font-family:
+    Geist,
     Inter,
     -apple-system,
     BlinkMacSystemFont,
@@ -122,6 +204,7 @@ body {
   overflow: hidden;
   color: var(--hf-text-secondary, rgba(244, 244, 245, 0.68));
   font-family:
+    Geist,
     Inter,
     -apple-system,
     BlinkMacSystemFont,
@@ -138,7 +221,7 @@ body {
   text-overflow: ellipsis;
   white-space: nowrap;
   color: var(--hf-text-tertiary, rgba(244, 244, 245, 0.46));
-  font-family: "IBM Plex Mono", "SF Mono", "Fira Code", monospace;
+  font-family: "Geist Mono", "IBM Plex Mono", "SF Mono", "Fira Code", monospace;
   font-size: 0.75rem;
   letter-spacing: 0;
   font-variant-numeric: tabular-nums;
@@ -158,6 +241,6 @@ body {
   transform: scaleX(0);
   transform-origin: left center;
   border-radius: inherit;
-  background: linear-gradient(90deg, #06e3fa, #4fdb5e);
+  background: linear-gradient(90deg, #8c8ef5, #5d5fef);
   transition: transform 160ms ease;
 }

@@ -11,7 +11,7 @@ describe("getTimelineTrackStyle", () => {
   });
 
   it("falls back for unknown tags", () => {
-    expect(getTimelineTrackStyle("custom-tag").accent).toBe("#3CE6AC");
+    expect(getTimelineTrackStyle("custom-tag").accent).toBe("#5D5FEF");
   });
 });
 

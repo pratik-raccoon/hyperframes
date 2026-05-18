@@ -2,6 +2,7 @@ import {
   WarningCircle,
   Warning,
   ArrowLeft as PhArrowLeft,
+  ArrowUp as PhArrowUp,
   Check as PhCheck,
   CheckCircle as PhCheckCircle,
   Circle as PhCircle,
@@ -72,6 +73,7 @@ const makeIcon = (Icon: PhosphorIcon) => {
 export const AlertCircle = makeIcon(WarningCircle);
 export const AlertTriangle = makeIcon(Warning);
 export const ArrowLeft = makeIcon(PhArrowLeft);
+export const ArrowUp = makeIcon(PhArrowUp);
 export const Check = makeIcon(PhCheck);
 export const CheckCircle = makeIcon(PhCheckCircle);
 /** CheckCircle2 in lucide is visually identical to CheckCircle */

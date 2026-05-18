@@ -82,8 +82,8 @@ export function TimelineEditorNotice({ onDismiss }: TimelineEditorNoticeProps) {
                     left: "50%",
                     width: 2,
                     marginLeft: -1,
-                    background: "var(--hf-accent, #3CE6AC)",
-                    boxShadow: "0 0 8px rgba(60,230,172,0.5)",
+                    background: "var(--raccoon)",
+                    boxShadow: "0 0 8px hsl(var(--raccoon-foreground) / 0.5)",
                   }}
                 />
                 <div
@@ -96,7 +96,7 @@ export function TimelineEditorNotice({ onDismiss }: TimelineEditorNoticeProps) {
                       height: 0,
                       borderLeft: "6px solid transparent",
                       borderRight: "6px solid transparent",
-                      borderTop: "8px solid var(--hf-accent, #3CE6AC)",
+                      borderTop: "8px solid var(--raccoon)",
                       filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.6))",
                     }}
                   />

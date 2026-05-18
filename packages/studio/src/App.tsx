@@ -1,5 +1,8 @@
 import { useState, useCallback, useRef, useMemo, useEffect } from "react";
 import type { LeftSidebarHandle } from "./components/sidebar/LeftSidebar";
+// CUSTOM-FORK: raccoon feature gates + Raccoon host bridge.
+import { IS_RACCOON_BUILD, RACCOON_HIDES_LEFT_SIDEBAR } from "./raccoon";
+import { useRaccoonHostBridge } from "./hooks/useRaccoonHostBridge";
 import { useRenderQueue } from "./components/renders/useRenderQueue";
 import { usePlayerStore } from "./player";
 import { LintModal } from "./components/LintModal";
@@ -89,12 +92,16 @@ export function StudioApp() {
     window.setTimeout(() => setPreviewDocumentVersion((v) => v + 1), 300);
   }, []);
 
-  const [timelineVisible, setTimelineVisible] = useState(
-    () =>
-      initialUrlStateRef.current.timelineVisible ??
-      readStudioUiPreferences().timelineVisible ??
-      true,
+  // CUSTOM-FORK: hide timeline by default in the raccoon build. The host iframe
+  // is for preview, not editing — exposing the timeline only adds clutter.
+  const [timelineVisible, setTimelineVisible] = useState(() =>
+    IS_RACCOON_BUILD
+      ? false
+      : (initialUrlStateRef.current.timelineVisible ??
+        readStudioUiPreferences().timelineVisible ??
+        true),
   );
+  const raccoonHost = useRaccoonHostBridge();
   const toggleTimelineVisibility = useCallback(() => {
     setTimelineVisible((v) => {
       writeStudioUiPreferences({ timelineVisible: !v });
@@ -409,15 +416,23 @@ export function StudioApp() {
                 refreshCaptureFrameTime={frameCapture.refreshCaptureFrameTime}
                 inspectorButtonActive={inspectorButtonActive}
                 inspectorPanelActive={inspectorPanelActive}
+                /* CUSTOM-FORK: surface the Export button in the header iff the
+                 * Raccoon host has hello'd (postMessage handshake). */
+                showExportButton={raccoonHost.isRaccoonHost}
+                onRequestExport={() => raccoonHost.requestExport({ projectId, activeCompPath })}
               />
 
               <div className="flex flex-1 min-h-0">
-                <StudioLeftSidebar
-                  leftSidebarRef={leftSidebarRef}
-                  onSelectComposition={handleSelectComposition}
-                  onLint={handleLint}
-                  linting={linting}
-                />
+                {/* CUSTOM-FORK: omit the left sidebar entirely in the raccoon
+                 * build — no file tree / source editor / lint affordance. */}
+                {!RACCOON_HIDES_LEFT_SIDEBAR && (
+                  <StudioLeftSidebar
+                    leftSidebarRef={leftSidebarRef}
+                    onSelectComposition={handleSelectComposition}
+                    onLint={handleLint}
+                    linting={linting}
+                  />
+                )}
                 <StudioPreviewArea
                   timelineToolbar={timelineToolbar}
                   renderClipContent={renderClipContent}
@@ -437,6 +452,10 @@ export function StudioApp() {
                     selectedStudioMotion={selectedStudioMotion}
                     designPanelActive={designPanelActive}
                     motionPanelActive={motionPanelActive}
+                    /* CUSTOM-FORK: thread the bridge down so PropertyPanel
+                     * can render the inline Ask Agent composer in raccoon
+                     * mode. */
+                    raccoonHost={raccoonHost}
                   />
                 )}
               </div>
@@ -453,18 +472,24 @@ export function StudioApp() {
                 />
               )}
 
-              {domEditSession.agentModalOpen && domEditSession.domEditSelection && (
-                <AskAgentModal
-                  selectionLabel={domEditSession.domEditSelection.label}
-                  anchorPoint={domEditSession.agentModalAnchorPoint}
-                  onSubmit={domEditSession.handleAgentModalSubmit}
-                  onClose={() => {
-                    domEditSession.setAgentModalOpen(false);
-                    domEditSession.setAgentPromptSelectionContext(undefined);
-                    domEditSession.setAgentModalAnchorPoint(null);
-                  }}
-                />
-              )}
+              {/* CUSTOM-FORK: suppress the Ask Agent modal in raccoon-host
+               * mode — PropertyPanel renders an inline composer that forwards
+               * the prompt via postMessage. The modal flow is preserved for
+               * non-raccoon builds. */}
+              {!raccoonHost.isRaccoonHost &&
+                domEditSession.agentModalOpen &&
+                domEditSession.domEditSelection && (
+                  <AskAgentModal
+                    selectionLabel={domEditSession.domEditSelection.label}
+                    anchorPoint={domEditSession.agentModalAnchorPoint}
+                    onSubmit={domEditSession.handleAgentModalSubmit}
+                    onClose={() => {
+                      domEditSession.setAgentModalOpen(false);
+                      domEditSession.setAgentPromptSelectionContext(undefined);
+                      domEditSession.setAgentModalAnchorPoint(null);
+                    }}
+                  />
+                )}
 
               {globalDragOver && <StudioGlobalDragOverlay />}
 

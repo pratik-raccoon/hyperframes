@@ -35,16 +35,20 @@ export interface TimelineTheme {
   clipRadius: string;
 }
 
-const TIMELINE_TEAL = "#3CE6AC";
-const TIMELINE_TEAL_LABEL = "#E9FFF6";
-const TIMELINE_TEAL_ICON_BACKGROUND = "rgba(60,230,172,0.12)";
+// CUSTOM-FORK: raccoon accent. The track styles below string-concatenate an
+// alpha hex onto these literals (`${ts.accent}14`), so they must stay as
+// 6-digit hex — `var(--raccoon)` does not substitute textually inside
+// inline-style strings.
+const TIMELINE_ACCENT = "#5D5FEF";
+const TIMELINE_ACCENT_LABEL = "#EFEFFF";
+const TIMELINE_ACCENT_ICON_BACKGROUND = "rgba(93,95,239,0.12)";
 
 function createTrackStyle(): TimelineTrackStyle {
   return {
-    clip: TIMELINE_TEAL,
-    accent: TIMELINE_TEAL,
-    label: TIMELINE_TEAL_LABEL,
-    iconBackground: TIMELINE_TEAL_ICON_BACKGROUND,
+    clip: TIMELINE_ACCENT,
+    accent: TIMELINE_ACCENT,
+    label: TIMELINE_ACCENT_LABEL,
+    iconBackground: TIMELINE_ACCENT_ICON_BACKGROUND,
   };
 }
 
@@ -63,15 +67,19 @@ const TRACK_STYLES: Record<string, TimelineTrackStyle> = {
 const DEFAULT_TRACK_STYLE: TimelineTrackStyle = createTrackStyle();
 
 export const defaultTimelineTheme: TimelineTheme = {
-  shellBackground: "#0A0A0B",
+  // CUSTOM-FORK: surfaces wired to the raccoon --background/--foreground/
+  // --muted-foreground tokens so the timeline tracks the rest of the chrome
+  // when the palette shifts. These are consumed via React inline styles
+  // (no string-concat), so var() / hsl() strings resolve correctly.
+  shellBackground: "hsl(var(--background))",
   shellBorder: "rgba(255,255,255,0.05)",
   rulerBorder: "rgba(255,255,255,0.045)",
-  rowBackground: "#0A0A0B",
+  rowBackground: "hsl(var(--background))",
   rowBorder: "rgba(255,255,255,0.05)",
-  gutterBackground: "#0A0A0B",
+  gutterBackground: "hsl(var(--background))",
   gutterBorder: "rgba(255,255,255,0.05)",
-  textPrimary: "#E8EDF5",
-  textSecondary: "#8391A8",
+  textPrimary: "hsl(var(--foreground))",
+  textSecondary: "hsl(var(--muted-foreground))",
   tickText: "rgba(131,145,168,0.92)",
   tickMajor: "rgba(255,255,255,0.13)",
   tickMinor: "rgba(255,255,255,0.08)",

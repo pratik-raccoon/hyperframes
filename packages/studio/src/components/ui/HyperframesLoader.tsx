@@ -63,8 +63,8 @@ export function HyperframesLoader({
               y2="71.9384"
               gradientUnits="userSpaceOnUse"
             >
-              <stop stopColor="#06E3FA" />
-              <stop offset="1" stopColor="#4FDB5E" />
+              <stop stopColor="#8C8EF5" />
+              <stop offset="1" stopColor="#5D5FEF" />
             </linearGradient>
             <linearGradient
               id="hf-loader-grad-right"
@@ -74,8 +74,8 @@ export function HyperframesLoader({
               y2="32.8932"
               gradientUnits="userSpaceOnUse"
             >
-              <stop stopColor="#06E3FA" />
-              <stop offset="1" stopColor="#4FDB5E" />
+              <stop stopColor="#8C8EF5" />
+              <stop offset="1" stopColor="#5D5FEF" />
             </linearGradient>
           </defs>
         </svg>

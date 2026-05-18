@@ -176,17 +176,23 @@ export function EaseCurveEditor({
           y2={plot.top + plot.height}
           stroke="rgba(255,255,255,0.18)"
         />
-        <line x1={start.x} y1={start.y} x2={p1.x} y2={p1.y} stroke="rgba(255,221,87,0.34)" />
-        <line x1={end.x} y1={end.y} x2={p2.x} y2={p2.y} stroke="rgba(255,221,87,0.34)" />
-        <path d={curvePath} fill="none" stroke="#ffdd57" strokeWidth="4" strokeLinecap="round" />
-        <circle cx={start.x} cy={start.y} r="5" fill="#ffdd57" />
-        <circle cx={end.x} cy={end.y} r="5" fill="#ffdd57" />
+        <line x1={start.x} y1={start.y} x2={p1.x} y2={p1.y} stroke="rgba(93,95,239,0.4)" />
+        <line x1={end.x} y1={end.y} x2={p2.x} y2={p2.y} stroke="rgba(93,95,239,0.4)" />
+        <path
+          d={curvePath}
+          fill="none"
+          stroke="var(--raccoon)"
+          strokeWidth="4"
+          strokeLinecap="round"
+        />
+        <circle cx={start.x} cy={start.y} r="5" fill="var(--raccoon)" />
+        <circle cx={end.x} cy={end.y} r="5" fill="var(--raccoon)" />
         <circle
           cx={p1.x}
           cy={p1.y}
           r="9"
           fill="#141414"
-          stroke="#ffdd57"
+          stroke="var(--raccoon)"
           strokeWidth="4"
           className="cursor-grab active:cursor-grabbing"
           onPointerDown={(event) => startDrag("p1", event)}
@@ -196,7 +202,7 @@ export function EaseCurveEditor({
           cy={p2.y}
           r="9"
           fill="#141414"
-          stroke="#ffdd57"
+          stroke="var(--raccoon)"
           strokeWidth="4"
           className="cursor-grab active:cursor-grabbing"
           onPointerDown={(event) => startDrag("p2", event)}

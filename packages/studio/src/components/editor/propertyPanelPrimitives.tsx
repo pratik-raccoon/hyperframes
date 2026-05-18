@@ -252,7 +252,7 @@ export function SliderControl({
         onMouseUp={() => commitDraft(draft)}
         onTouchEnd={() => commitDraft(draft)}
         onBlur={() => commitDraft(draft)}
-        className="h-2 min-w-0 w-full cursor-pointer appearance-none rounded-full bg-neutral-800 accent-[#3ce6ac] disabled:cursor-not-allowed"
+        className="h-2 min-w-0 w-full cursor-pointer appearance-none rounded-full bg-neutral-800 accent-[var(--raccoon)] disabled:cursor-not-allowed"
       />
       <div className="min-w-[52px] rounded-xl border border-neutral-800 bg-neutral-900 px-2 py-2 text-right text-[11px] font-medium text-neutral-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
         {formatDisplayValue?.(draft) ?? displayValue}

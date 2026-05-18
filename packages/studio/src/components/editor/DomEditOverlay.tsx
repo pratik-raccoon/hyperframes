@@ -273,7 +273,7 @@ export const DomEditOverlay = memo(function DomEditOverlay({
         <div
           aria-hidden="true"
           data-dom-edit-hover-box="true"
-          className="pointer-events-none absolute rounded-xl border border-studio-accent/80 bg-studio-accent/5 shadow-[0_0_0_1px_rgba(60,230,172,0.25)]"
+          className="pointer-events-none absolute rounded-xl border border-studio-accent/80 bg-studio-accent/5 shadow-[0_0_0_1px_rgba(93,95,239,0.25)]"
           style={{
             left: hoverRect.left,
             top: hoverRect.top,
@@ -299,7 +299,7 @@ export const DomEditOverlay = memo(function DomEditOverlay({
           ))}
           <div
             data-dom-edit-selection-box="true"
-            className="pointer-events-auto absolute rounded-xl border border-studio-accent bg-studio-accent/5 shadow-[0_0_0_1px_rgba(60,230,172,0.3)]"
+            className="pointer-events-auto absolute rounded-xl border border-studio-accent bg-studio-accent/5 shadow-[0_0_0_1px_rgba(93,95,239,0.3)]"
             style={{
               left: groupBounds.left,
               top: groupBounds.top,
@@ -332,7 +332,7 @@ export const DomEditOverlay = memo(function DomEditOverlay({
               <div className="absolute left-1/2 top-3 bottom-0 w-px -translate-x-1/2 bg-studio-accent/60" />
               <button
                 type="button"
-                className="pointer-events-auto absolute left-1/2 top-0 h-3 w-3 -translate-x-1/2 rounded-full border border-studio-accent bg-studio-accent p-0 shadow-[0_0_0_2px_rgba(60,230,172,0.18)]"
+                className="pointer-events-auto absolute left-1/2 top-0 h-3 w-3 -translate-x-1/2 rounded-full border border-studio-accent bg-studio-accent p-0 shadow-[0_0_0_2px_rgba(93,95,239,0.18)]"
                 style={{ cursor: "grab", touchAction: "none" }}
                 title="Rotate"
                 aria-label="Rotate selection"
@@ -347,7 +347,7 @@ export const DomEditOverlay = memo(function DomEditOverlay({
             key={selectionKey}
             ref={boxRef}
             data-dom-edit-selection-box="true"
-            className="pointer-events-auto absolute rounded-xl border border-studio-accent/80 bg-studio-accent/5 shadow-[0_0_0_1px_rgba(60,230,172,0.25)]"
+            className="pointer-events-auto absolute rounded-xl border border-studio-accent/80 bg-studio-accent/5 shadow-[0_0_0_1px_rgba(93,95,239,0.25)]"
             style={{
               left: overlayRect.left,
               top: overlayRect.top,

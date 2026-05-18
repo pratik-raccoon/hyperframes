@@ -126,7 +126,7 @@ export const AudioWaveform = memo(function AudioWaveform({
       const amp = peaks[peakIdx] ?? 0;
       const pct = Math.max(3, Math.round(amp * 100));
       const opacity = (0.45 + amp * 0.4).toFixed(2);
-      html += `<div style="position:absolute;bottom:0;left:${i * STEP}px;width:${BAR_W}px;height:${pct}%;background:rgba(75,163,210,${opacity})"></div>`;
+      html += `<div style="position:absolute;bottom:0;left:${i * STEP}px;width:${BAR_W}px;height:${pct}%;background:rgba(93,95,239,${opacity})"></div>`;
     }
     barsEl.innerHTML = html;
   }, [peaks]);

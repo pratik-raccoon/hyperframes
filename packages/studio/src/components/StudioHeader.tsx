@@ -1,5 +1,5 @@
 import type { MouseEvent } from "react";
-import { RotateCcw, RotateCw, Camera } from "../icons/SystemIcons";
+import { RotateCcw, RotateCw, Camera, Download } from "../icons/SystemIcons";
 import {
   STUDIO_INSPECTOR_PANELS_ENABLED,
   STUDIO_MANUAL_EDITING_DISABLED_TITLE,
@@ -8,6 +8,8 @@ import { getHistoryShortcutLabel } from "../utils/studioHelpers";
 import { useStudioContext } from "../contexts/StudioContext";
 import { usePanelLayoutContext } from "../contexts/PanelLayoutContext";
 import { useDomEditContext } from "../contexts/DomEditContext";
+// CUSTOM-FORK: raccoon feature gates.
+import { RACCOON_HIDES_CAPTURE, RACCOON_HIDES_HEADER_LOGO } from "../raccoon";
 
 export interface StudioHeaderProps {
   captureFrameHref: string;
@@ -16,6 +18,9 @@ export interface StudioHeaderProps {
   refreshCaptureFrameTime: () => void;
   inspectorButtonActive: boolean;
   inspectorPanelActive: boolean;
+  // CUSTOM-FORK: surfaced by App.tsx when the Raccoon host hello has arrived.
+  showExportButton?: boolean;
+  onRequestExport?: () => void;
 }
 
 function HyperframesLogo() {
@@ -41,8 +46,8 @@ function HyperframesLogo() {
           y2="37.482"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stopColor="#06E3FA" />
-          <stop offset="1" stopColor="#4FDB5E" />
+          <stop stopColor="#8C8EF5" />
+          <stop offset="1" stopColor="#5D5FEF" />
         </linearGradient>
         <linearGradient
           id="hf-g1"
@@ -52,8 +57,8 @@ function HyperframesLogo() {
           y2="6.303"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stopColor="#06E3FA" />
-          <stop offset="1" stopColor="#4FDB5E" />
+          <stop stopColor="#8C8EF5" />
+          <stop offset="1" stopColor="#5D5FEF" />
         </linearGradient>
       </defs>
       {/* heygen label */}
@@ -146,19 +151,27 @@ export function StudioHeader({
   refreshCaptureFrameTime,
   inspectorButtonActive,
   inspectorPanelActive,
+  showExportButton = false,
+  onRequestExport,
 }: StudioHeaderProps) {
   const { projectId, editHistory, handleUndo, handleRedo } = useStudioContext();
   const { rightCollapsed, setRightCollapsed, setRightPanelTab } = usePanelLayoutContext();
   const { clearDomSelection } = useDomEditContext();
 
   return (
-    <div className="flex items-center justify-between h-10 px-3 bg-neutral-900 border-b border-neutral-800 flex-shrink-0">
+    <div className="flex items-center justify-between h-10 px-3 bg-neutral-950 border-b border-neutral-800 flex-shrink-0">
       {/* Left: logo + project name */}
       <div className="flex items-center gap-3">
-        <HyperframesLogo />
-        <span className="text-neutral-700 select-none" aria-hidden="true">
-          |
-        </span>
+        {/* CUSTOM-FORK: hide the Hyperframes wordmark in the raccoon build —
+         * the Raccoon host already brands the surrounding chrome. */}
+        {!RACCOON_HIDES_HEADER_LOGO && (
+          <>
+            <HyperframesLogo />
+            <span className="text-neutral-700 select-none" aria-hidden="true">
+              |
+            </span>
+          </>
+        )}
         <span className="text-[11px] font-medium text-neutral-300">{projectId}</span>
       </div>
       {/* Right: toolbar buttons */}
@@ -199,19 +212,38 @@ export function StudioHeader({
         >
           <RotateCw size={14} />
         </button>
-        <a
-          href={captureFrameHref}
-          download={captureFrameFilename}
-          onClick={handleCaptureFrameClick}
-          onFocus={refreshCaptureFrameTime}
-          onPointerDown={refreshCaptureFrameTime}
-          className="h-7 flex items-center gap-1.5 px-2.5 rounded-md text-[11px] font-medium border border-neutral-700 text-neutral-300 transition-colors hover:border-neutral-500 hover:bg-neutral-800"
-          title="Capture current frame"
-          aria-label="Capture current frame"
-        >
-          <Camera size={14} />
-          <span>Capture</span>
-        </a>
+        {/* CUSTOM-FORK: Capture button needs local browser to render the frame —
+         * unavailable in the raccoon build. */}
+        {!RACCOON_HIDES_CAPTURE && (
+          <a
+            href={captureFrameHref}
+            download={captureFrameFilename}
+            onClick={handleCaptureFrameClick}
+            onFocus={refreshCaptureFrameTime}
+            onPointerDown={refreshCaptureFrameTime}
+            className="h-7 flex items-center gap-1.5 px-2.5 rounded-md text-[11px] font-medium border border-neutral-700 text-neutral-300 transition-colors hover:border-neutral-500 hover:bg-neutral-800"
+            title="Capture current frame"
+            aria-label="Capture current frame"
+          >
+            <Camera size={14} />
+            <span>Capture</span>
+          </a>
+        )}
+        {/* CUSTOM-FORK: only present when the Raccoon host has handshaken via
+         * postMessage. Render is delegated to the host — we just emit a
+         * RACCOON_EXPORT_REQUESTED event and let the parent take it from there. */}
+        {showExportButton && (
+          <button
+            type="button"
+            onClick={onRequestExport}
+            className="h-7 flex items-center gap-1.5 px-2.5 rounded-md text-[11px] font-medium border border-neutral-700 text-neutral-300 transition-colors hover:border-neutral-500 hover:bg-neutral-800"
+            title="Export"
+            aria-label="Export"
+          >
+            <Download size={14} />
+            <span>Export</span>
+          </button>
+        )}
         <button
           type="button"
           onClick={() => {

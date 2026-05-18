@@ -6,6 +6,10 @@ import {
   type DomEditSelection,
   type DomEditLayerItem,
 } from "./domEditing";
+// CUSTOM-FORK: inline replacement for the Ask Agent modal when the studio
+// runs inside the Raccoon host iframe.
+import type { RaccoonHostBridge } from "../../hooks/useRaccoonHostBridge";
+import { RaccoonAskAgentComposer } from "../raccoon/RaccoonAskAgentComposer";
 import { readStudioBoxSize, readStudioPathOffset, readStudioRotation } from "./manualEdits";
 import type { ImportedFontAsset } from "./fontAssets";
 import {
@@ -52,6 +56,10 @@ interface PropertyPanelProps {
   onImportFonts?: (files: FileList | File[]) => Promise<ImportedFontAsset[]>;
   activeCompositionPath?: string | null;
   onSelectLayer?: (layer: DomEditLayerItem) => void;
+  // CUSTOM-FORK: bridge to the Raccoon host. When present + isRaccoonHost,
+  // the Ask Agent button is replaced by an inline composer that submits
+  // prompts to the host via postMessage instead of copying to clipboard.
+  raccoonHost?: RaccoonHostBridge | null;
 }
 
 /* ------------------------------------------------------------------ */
@@ -139,6 +147,7 @@ export const PropertyPanel = memo(function PropertyPanel({
   onImportFonts,
   activeCompositionPath = null,
   onSelectLayer,
+  raccoonHost = null,
 }: PropertyPanelProps) {
   const styles = element?.computedStyles ?? EMPTY_STYLES;
 
@@ -244,16 +253,26 @@ export const PropertyPanel = memo(function PropertyPanel({
             <X size={13} />
           </button>
         </div>
-        <div className="mt-4 flex min-w-0 flex-wrap items-center gap-2">
-          <button
-            type="button"
-            onClick={onAskAgent}
-            className="inline-flex h-8 items-center justify-center gap-2 rounded-xl border border-neutral-700 bg-neutral-950 px-3.5 text-[11px] font-medium text-neutral-100 transition-colors hover:border-studio-accent/40 hover:text-studio-accent"
-          >
-            <MessageSquare size={15} />
-            <span>{copiedAgentPrompt ? "Prompt copied" : "Ask agent"}</span>
-          </button>
-        </div>
+        {/* CUSTOM-FORK: in raccoon-host mode replace the Ask Agent button
+         * with an inline composer that forwards the prompt to the host
+         * iframe instead of copying to clipboard. Upstream flow (button +
+         * AskAgentModal) is preserved for the non-raccoon build. */}
+        {raccoonHost?.isRaccoonHost ? (
+          <div className="mt-4 flex flex-col gap-2">
+            <RaccoonAskAgentComposer bridge={raccoonHost} />
+          </div>
+        ) : (
+          <div className="mt-4 flex min-w-0 flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={onAskAgent}
+              className="inline-flex h-8 items-center justify-center gap-2 rounded-xl border border-neutral-700 bg-neutral-950 px-3.5 text-[11px] font-medium text-neutral-100 transition-colors hover:border-studio-accent/40 hover:text-studio-accent"
+            >
+              <MessageSquare size={15} />
+              <span>{copiedAgentPrompt ? "Prompt copied" : "Ask agent"}</span>
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="flex-1 overflow-y-auto">
